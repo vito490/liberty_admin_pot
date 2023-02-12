@@ -1,0 +1,261 @@
+#!/usr/bin/env bash
+# ---------------------------------------------
+# Licensed Materials - Property of IBM
+# (C) Copyright IBM Corporation 2021
+# ---------------------------------------------
+source scripts/acceptLic.sh
+source ./scripts/findHost.sh
+getHostIp
+
+#### Usage ####
+
+if [ "$1" == "--h" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "-help" ]; then
+	echo "Welcome to Transformation Advisor Local."
+	echo "To install Transformation Advisor Local you need docker or podman installed."
+	exit 0
+fi
+
+#run scripts at relative path
+scriptdir="$(dirname "$0")"
+cd "$scriptdir"
+
+############################################# MAC ################################################################################
+
+## check if system is a mac
+
+if uname -s | grep 'Darwin' >/dev/null; then
+
+	## check if docker running
+	cmd6=$(docker ps 2>&1)
+
+	if [[ "$cmd6" =~ "connect" ]]; then
+		echo "Docker installed but not running. Please start docker and re-run the script."
+		exit
+	fi
+
+	## check docker running
+	cmd8=$(which docker 2>&1)
+
+	if [ -z "$cmd8" ] || [[ $cmd8 =~ "no docker in" ]]; then
+		echo ""
+		echo "Docker not installed. Please install docker and re-run the script."
+		echo "https://docs.docker.com/install/"
+		echo ""
+		exit
+	fi
+
+
+	cmd3=$(docker images | grep transformation-advisor-server | awk '{print $1}')
+	cmd4=$(docker images | grep transformation-advisor-ui | awk '{print $1}')
+	cmd5=$(docker images | grep transformation-advisor-db | awk '{print $1}')
+  cmd6=$(docker images | grep transformation-advisor-graph | awk '{print $1}')
+
+	host_to_find=$(ifconfig | grep -Fv -- "-->" | grep "inet " | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | grep -Fv 127 | grep -Fv 255 | grep -Fv 0.0.0.0)
+
+	if [[ -z ${TA_LOCAL_RUNTIME_HOST_IP} && (-z $cmd3 || -z $cmd4 || -z $cmd5 || -z $cmd6) ]]; then
+		echo "Status"
+		echo "------------------------------------------------------------------------------------------------------"
+		echo "Unable to detect a Public IP Address and not all Transformation Advisor docker images are pulled."
+		echo ""
+		echo ""
+		echo "
+
+     1) Working in an Air Gapped Environment.
+     2) Quit."
+
+		read n
+		case $n in
+		1) ./scripts/fileImages.sh ;;
+		2) exit ;;
+
+		esac
+		exit
+
+	fi
+
+	## get ID of container
+	server_ta=$(docker ps -a | grep transformation-advisor-server | awk '{print $1}')
+
+	ta_ui_host=""
+	new_ta_ui_host=""
+	## check if TA is running
+	server_ta_running=$(docker ps | grep transformation-advisor-server | awk '{print $1}')
+
+	if [[ -n $server_ta_running ]]; then # means TA is running
+		ta_ui_host=$(docker exec -it $server_ta sh -c "env | grep TA_PUBLIC_ACCESSIBLE_API" | awk -F // '{print $2}' | awk -F : '{print $1}')
+		new_ta_ui_host="${ta_ui_host//[[:space:]]/}"
+	fi
+
+	## check if images are pulled
+	cmd3=$(docker images | grep transformation-advisor-server | awk '{print $1}')
+	cmd4=$(docker images | grep transformation-advisor-ui | awk '{print $1}')
+	cmd5=$(docker images | grep transformation-advisor-db | awk '{print $1}')
+  cmd6=$(docker images | grep transformation-advisor-graph | awk '{print $1}')
+
+	if [ -e ./.license_accepted ]; then
+
+		if [[ -z $cmd3 ]] && [[ -z $cmd4 ]] && [[ -z $cmd5 ]]; then
+			echo "Status"
+			echo "------------------------------------------------------------------------------------------------------"
+			echo "Transformation Advisor docker images are not pulled even though there is a license file. Please remove the
+     license and re-run the script. rm -rf <install_dir>/.license_accepted"
+			exit
+		fi
+
+		if [[ (! -z $cmd3 && ! -z $cmd4 && -z $cmd5) || (! -z $cmd3 && -z $cmd4 && -z $cmd5) || (! -z $cmd3 && -z $cmd4 && ! -z $cmd5) || (-z \
+			$cmd3 && ! -z $cmd4 && ! -z $cmd5) || (-z $cmd3 && -z $cmd4 && ! -z $cmd5) || (-z $cmd3 && ! -z $cmd4 && -z $cmd5) ]]; then
+			echo "Status"
+			echo "------------------------------------------------------------------------------------------------------"
+			echo "Not all Transformation Advisor docker images are pulled."
+			echo "Select option 1 to install Transformation Advisor."
+			echo ""
+			echo ""
+			echo "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+			echo "
+
+1) Install Transformation Advisor.
+2) Quit."
+
+			read n
+			case $n in
+			1)
+				echo "Installing Transformation Advisor..."
+				./scripts/installTALocal.sh
+				;;
+			2) exit ;;
+
+			esac
+			exit
+
+		fi
+
+		# if the length of $server_ta_running is non-zero
+		if [[ (-n $server_ta_running && (${TA_LOCAL_RUNTIME_HOST_IP} != ${new_ta_ui_host}))]]; then
+			echo -n "Host mismatch...correcting......."
+			./scripts/stopBeforeInstall.sh
+			./scripts/installTALocalMismatch.sh
+		else
+			./scripts/launchTransformationAdvisor.sh $1
+			exit
+		fi
+	fi
+
+	if [ ! -e ./.license_accepted ]; then
+licenseType
+acceptLicense $1
+
+	fi
+
+################################################## END OF MAC ########################################################################################################
+else
+
+
+    ## check minimum number of cores
+    if [[ -f "/proc/cpuinfo" ]]; then
+        numCores=$(cat /proc/cpuinfo | grep processor | wc -l)
+        if [[ "$numCores" -lt "4" ]]; then
+            echo "Not enough CPU cores. You need at least 4 CPU cores to run."
+            exit
+        fi
+    fi
+
+	## check docker
+	cmd6=$(docker ps 2>&1)
+
+	if [[ "$cmd6" =~ "connect" ]]; then
+		echo "Docker installed but not running. Please start docker and re-run the script."
+		exit
+	fi
+
+ ## check docker  and podman running
+        cmd8=$(which docker 2>&1)
+        podRun=$(which podman 2>&1)
+
+        if [[ -z "$cmd8" || ! $cmd8 =~ "/usr/bin/docker" ]] && [[ ! $cmd8 =~ "/bin/docker" ]] && [[ -z "$podRun" || ! $podRun =~ "/usr/bin/podman" ]] && [[ ! $podRun =~ "/bin/podman" ]] ; then
+                echo ""
+                echo "Docker and Podman not installed. Please install docker or podman and re-run the script."
+                echo "https://www.ibm.com/docs/en/cta?topic=started-non-ocp-install"
+                echo ""
+                exit
+        fi
+
+
+       ###if we find podman then we want alias
+       ##check for Ubuntu
+ 
+       if uname -a | grep 'Ubuntu' >/dev/null; then
+
+       if [[ !  -z "$podRun"  ||   $podRun =~ "no podman in" ]] ; then
+
+       shopt -s expand_aliases
+       alias docker='podman'
+
+       fi
+
+       else
+       if [[   -z "$podRun"  ||  ! $podRun =~ "no podman in" ]] ; then
+
+       shopt -s expand_aliases
+       alias docker='podman'
+
+       fi
+
+       fi
+
+
+	cmd3=$(docker images | grep transformation-advisor-server | awk '{print $1}')
+	cmd4=$(docker images | grep transformation-advisor-ui | awk '{print $1}')
+	cmd5=$(docker images | grep transformation-advisor-db | awk '{print $1}')
+        cmd6=$(docker images | grep transformation-advisor-neo4j | awk '{print $1}')
+
+	if [ -e ./.license_accepted ]; then
+
+		if [[ ! -z $cmd3 ]] && [[ ! -z $cmd4 ]] && [[ ! -z $cmd5 ]] && [[ ! -z $cmd6 ]]; then
+			echo "Status"
+			echo "------------------------------------------------------------------------------------------------------"
+			echo "Transformation Advisor docker images are not pulled even though there is a license file. Please remove the
+     license and re-run the script. rm -rf <install_dir>/.license_accepted"
+			exit
+		fi
+
+		if [[ (! -z $cmd3 && ! -z $cmd4 && -z $cmd5) || (! -z $cmd3 && -z $cmd4 && -z $cmd5) || (! -z $cmd3 && -z $cmd4 && ! -z $cmd5) || (-z \
+			$cmd3 && ! -z $cmd4 && ! -z $cmd5) || (-z $cmd3 && -z $cmd4 && ! -z $cmd5) || (-z $cmd3 && ! -z $cmd4 && -z $cmd5) ]]; then
+			echo "Status"
+			echo "------------------------------------------------------------------------------------------------------"
+			echo "Not all Transformation Advisor docker images are pulled."
+			echo "Select option 1 to install Transformation Advisor."
+			echo ""
+			echo ""
+			echo "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+			echo "
+
+1) Install Transformation Advisor.
+2) Quit."
+
+			read n
+			case $n in
+			1)
+				echo "Installing Transformation Advisor..."
+				./scripts/installTALocal.sh
+				;;
+			2) exit ;;
+
+			esac
+			exit
+
+		fi
+
+	else
+licenseType
+acceptLicense $1
+
+	fi
+
+	if [ -e ./.license_accepted ]; then
+		./scripts/launchTransformationAdvisor.sh $1
+
+	fi
+
+fi

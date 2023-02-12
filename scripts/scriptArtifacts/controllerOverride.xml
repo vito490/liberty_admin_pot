@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="new server">
+    <include location="${server.config.dir}/controller.xml" />
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>adminCenter-1.0</feature>
+    </featureManager>
+
+    <basicRegistry id="basic" realm="BasicRealm"> 
+        <user name="admin" password="admin" /> 
+    </basicRegistry>
+    
+    <administrator-role>
+    	<user>admin</user>
+    </administrator-role>
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="9090"
+                  httpsPort="9493" />
+                  
+</server>
+

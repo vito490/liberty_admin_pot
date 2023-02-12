@@ -1,0 +1,6 @@
+#Preferred command   (instalUtility)
+bin/installUtility install pbwServer
+
+
+#stablaized older command (featureUtility)
+featureUtility installServerFeatures myserver
