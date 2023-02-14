@@ -44,9 +44,9 @@ if [ -e "/tmp/plugin-key.sth" ]; then
      echo "/tmp/plugin-key.sth file removed"
 fi
 
-if [ -e “/tmp/plugin-key.crl” ]; then
+if [ -e "/tmp/plugin-key.crl" ]; then
      rm   /tmp/plugin-key.crl ;
-     echo “/tmp/plugin-key.crl file removed”
+     echo "/tmp/plugin-key.crl file removed"
 fi
 
 
