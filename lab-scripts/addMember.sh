@@ -74,15 +74,15 @@ fi
 #Lab environment variable
 LAB_HOME=/home/techzone
 WORK_DIR=$LAB_HOME/lab-work
-LAB_FILES=$LAB_HOME/liberty_admin_pot/LabFiles/lab_1040
-SCRIPT_ARTIFACTS=$LAB_FILES/scripts/scriptArtifacts
-LOGS=$LAB_FILES/logs
-SAVE_COMMAND="createMember.sh -n $SERVER_NAME -v $LIBERTY_VERSION-p $PORTS -h $MEMBER_HOSTNAME"
+LAB_FILES=$LAB_HOME/liberty_admin_pot
+SCRIPT_ARTIFACTS=$LAB_FILES/lab-scripts/scriptArtifacts
+LOGS=$WORK_DIR/logs
+SAVE_COMMAND="createMember.sh -n $SERVER_NAME -v $LIBERTY_VERSION -p $PORTS -h $MEMBER_HOSTNAME"
 
 #Controller variables
-CONTROLLER_NAME="adminCenterController"
-CONTROLLER_ROOT_DIR=$WORK_DIR/Liberty-Controller
-CONTROLLER_HTTPS_PORT=9493
+CONTROLLER_NAME="CollectiveController"
+CONTROLLER_ROOT_DIR=$WORK_DIR/liberty-controller
+CONTROLLER_HTTPS_PORT=9491
 CONTROLLER_HOSTNAME=`hostname`
 CONTROLLER_WLP_HOME="$CONTROLLER_ROOT_DIR/wlp"
 
@@ -93,50 +93,32 @@ HTTPS_PORT=$(echo $PORTS | cut -f2 -d:)
 echo "http port: $HTTP_PORT"
 echo "https port: $HTTPS_PORT"
 
-LIBERTY_ROOT=$WORK_DIR
+LIBERTY_ROOT=$WORK_DIR/liberty-staging
 PACKAGED_PBW_SERVER_NAME="pbwServerX"
-WLP_HOME="$WORK_DIR/staging/$LIBERTY_VERSION-$SERVER_NAME/wlp"  #this needs to be the liberty home for the verion of Liberty unzipped
+WLP_HOME="$LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME/wlp"  #this needs to be the liberty home for the verion of Liberty unzipped
 
 PACKAGED_SERVER_DIR=$WORK_DIR/packagedServers
 PACKAGED_ARCHIVE_NAME=$LIBERTY_VERSION-$PACKAGED_PBW_SERVER_NAME.zip
 FULL_PATH_PACKAGED_SERVER_PATH=$PACKAGED_SERVER_DIR/$LIBERTY_VERSION-$PACKAGED_PBW_SERVER_NAME
-LOG=$LOGS/1_createMember-$SERVER_NAME.log
-
+LOG=$LOGS/1_createMember-$LIBERTY_VERSION-$SERVER_NAME.log
 
 
 #Remote member variables
 KNOWN_REMOTE_HOST1="server1.gym.lan"
-REMOTE_LOG=$LOGS/2_addRemoteMember_$SERVER_NAME.log
+REMOTE_LOG=$LOGS/2_addRemoteMember-$LIBERTY_VERSION-$SERVER_NAME.log
 
+# ports cannot be same value
+if [  "$HTTP_PORT" == "$HTTPS_PORT" ]; then 
+  echo "The HTTP and HTTPS ports were not specified correctly. Verify the ports paramter is in the format of 'http_port:https_port'and rerun the script"
 
-
-if [ ! -d "$LOGS" ]; then
-     mkdir $LOGS ;
-     echo "Create Logs Directory: $LOGS"
+  exit 1
 fi
-
-if [  -f "$LOG" ]; then
-    rm $LOG ;
-    echo "removed $LOG"
-fi
-
-
-
-echo "#----------------------------------" | tee $LOG
-echo "# Now running createMember.sh" | tee -a $LOG
-echo "#----------------------------------" | tee -a $LOG
-
-sleep 5
-
-
 
 
 #Ensure the -h flag contains a valid hostname for this lab environment
 
-echo "The '-h $MEMBER_HOSTNAME' flag was specified for the script"
-
  if [[ "$MEMBER_HOSTNAME" = "$CONTROLLER_HOSTNAME" ]] || [[ "$MEMBER_HOSTNAME" = "$KNOWN_REMOTE_HOST1" ]]; then
-     echo "Liberty member hostname passed in: $MEMBER_HOSTNAME"
+      echo " "
 else 
      echo "The -h flag specified contains an invalid member hostName parameter."
       echo "   specify 'server0.gym.lan' for creating a local collective member"
@@ -150,6 +132,26 @@ if [[ "$MEMBER_HOSTNAME" = "$CONTROLLER_HOSTNAME" ]] ; then
 else 
   MEMBER_TYPE="remote"  
   WLP_HOME_REMOTE="/opt/IBM/wlp"
+fi
+
+
+echo "#----------------------------------" | tee $LOG
+echo "# Now running addMember.sh" | tee -a $LOG
+echo "#----------------------------------" | tee -a $LOG
+
+sleep 5
+
+
+#create the LOGS directory if it does not exist
+if [ ! -d "$LOGS" ]; then
+     mkdir $LOGS ;
+     echo "Create Logs Directory: $LOGS"
+fi
+
+#Remove the old log if it exists
+if [  -f "$LOG" ]; then
+    rm $LOG ;
+    echo "removed $LOG"
 fi
 
 
@@ -200,8 +202,13 @@ echo "# Controller HTTPS Port: $CONTROLLER_HTTPS_PORT" | tee -a $LOG
 echo "# Name of Liberty Server being registered: $SERVER_NAME" | tee -a $LOG
 echo "# Collective member HTTP Port: $HTTP_PORT" | tee -a $LOG
 echo "# Collective member HTTP Port: $HTTPS_PORT" | tee -a $LOG
+echo "# Liberty Server Package to deploy: $PACKAGED_ARCHIVE_NAME" | tee -a $LOG
+echo "# Liberty Server name in package: $PACKAGED_PBW_SERVER_NAME" | tee -a $LOG
+echo "# Liberty Server Package location: $PACKAGED_SERVER_DIR" | tee -a $LOG
+echo "# Full path to the Librty server package: $FULL_PATH_PACKAGED_SERVER_PATH" | tee -a $LOG
 echo "#-------------------------------------------------------------" | tee -a $LOG
 echo "" | tee -a $LOG
+
 
 #Have user reply "y" to continue the script, afer ensuring accuracy of the variables inout 
 read -p "Do you wish to continue with the parameters specified? (y/n)? " answer
@@ -233,31 +240,65 @@ verify_server_package_exists()
 
 join_Local_Member() 
 { 
+  
+#create the $LIBERTY_ROOT for the labs
+  echo "Create the Liberty Root directory if it does not exist: $LIBERTY_ROOT"
+  
+  
+  echo "" | tee -a $LOG
+  echo "# Create the Liberty root directory, if it does not exist" | tee -a $LOG
+  echo "mkdir $LIBERTY_ROOT" | tee -a $LOG
+  echo "" | tee -a $LOG  
+    
+  
+  if [ ! -d "$LIBERTY_ROOT" ]; then
+     mkdir $LIBERTY_ROOT;
+     echo "Liberty Root directory created: $LIBERTY_ROOT"
+  fi 
 
-#Unzip the server package
-#Modify the http:https ports in the overrides xml file
+#Unzip the server package for the specified version of Liberty. The server package must already be created by using the libetyBuildManager scripts. 
+#Do not allow to unzip if the ServerName with ServerVersion already exists. 
 
-  mkdir $LIBERTY_ROOT/staging
-  #mkdir $LIBERTY_ROOT/staging/$LIBERTY_VERSION
-  #mkdir $LIBERTY_ROOT/staging/$LIBERTY_VERSION/$PBW_SERVER_NAME
-  echo "Directory to create for Server: $LIBERTY_ROOT/staging"
-  echo "Unzip the server package"
-  unzip $FULL_PATH_PACKAGED_SERVER_PATH.zip -d $LIBERTY_ROOT/staging/$LIBERTY_VERSION-$SERVER_NAME
- #Update ports in overrides xml file, using ports passed in
- #Update Server name from pbsServerX to SERVER_NAME passed in 
+  echo "" | tee -a $LOG
+  echo "# Unzip the Liberty server package to the Liberty root directoy" | tee -a $LOG
+  echo " unzip -o $FULL_PATH_PACKAGED_SERVER_PATH.zip -d $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME" | tee -a $LOG
+  echo "" | tee -a $LOG  
 
 
-#Rename the serverX server dir to $SERVER_NAME passed it
+  if [ ! -d "$LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME" ]; then
+    echo "Unzip the server package"
+    unzip -o $FULL_PATH_PACKAGED_SERVER_PATH.zip -d $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME
+ 
+   echo "The Server package was extracted to: $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME"
+   sleep 3
+  else 
+    echo "A server package already exists of name: $LIBERTY_VERSION-$SERVER_NAME, and therefore cannot be extracted to directory: $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME". 
+    echo "A collective member of that server name may already exist in the collective. 
+    echo "
+    echo "Exiting!" 
+    exit 1
+  fi 
 
-echo "Rename the default packaged server name $PACKAGED_PBW_SERVER_NAME to $SERVER_NAME"
-mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERVER_NAME
 
+#Rename the pbwserverX server dir to $SERVER_NAME passed in
+
+  echo "" | tee -a $LOG
+  echo "# Rename the default packaged servername based on servername passed in on paramters" | tee -a $LOG
+  echo "mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERVER_NAME" | tee -a $LOG
+  echo "" | tee -a $LOG  
+
+
+  echo "Rename the default packaged server name $PACKAGED_PBW_SERVER_NAME to $SERVER_NAME"
+  mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERVER_NAME
+  echo "The Server name is: $SERVER_NAME"
+  sleep 5
 
  
 #Update the Liberty server ports in the memberOverrides.xml with ports passed into script
   echo "" | tee -a $LOG
   echo "# Update the Liberty server ports in the memberOverrides.xml" | tee -a $LOG
   echo "sed -i 's/9084/'$HTTP_PORT'/g' $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides/memberOverride.xml" | tee -a $LOG
+  echo "" | tee -a $LOG
   echo "sed -i 's/9446/'$HTTPS_PORT'/g' $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides/memberOverride.xml" | tee -a $LOG
   echo "" | tee -a $LOG
   
@@ -266,10 +307,11 @@ mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERV
   sed -i 's/9446/'$HTTPS_PORT'/g' $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides/memberOverride.xml 
   echo "HTTP port is now set to $HTTP_PORT in configOverrides" 
   echo "HTTPS port is now set to $HTTPS_PORT in configOverrides" 
-
+  sleep 3
 
   echo "joining local member to collecive...." 
- 
+  sleep 3
+   
   #join a local server to the collective
   
   echo "" | tee -a $LOG
@@ -287,13 +329,10 @@ mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERV
   
   $WLP_HOME/bin/collective join $SERVER_NAME --host=$CONTROLLER_HOSTNAME --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --createConfigFile=$WLP_HOME/usr/servers/$SERVER_NAME/controller.xml
 
-   if [[ $? != 0 ]]; then
-   echo "#ERROR Failed to join $SERVER_NAME to the collective. See the error message that was returned!" | tee -a $LOG
+  if [[ $? != 0 ]]; then
+    echo "#ERROR Failed to join $SERVER_NAME to the collective. See the error message that was returned!" | tee -a $LOG
    
-   #cleanup the local server and packaged serverarchive
-   #delete_liberty_server $SERVER_NAME
-   #delete_package_server_archive $SERVER_NAME
-   exit 1
+    exit 1
   fi 
 
 
@@ -305,7 +344,7 @@ mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERV
 
 start_local_liberty_server()
 {
-#start the Local Liberty server
+#start the Local Liberty server (NOT USED)
   echo "" | tee -a $LOG
   echo "# Start the local Liberty Server member" | tee -a $LOG
   echo "$WLP_HOME/bin/server start $SERVER_NAME" | tee -a $LOG
@@ -337,7 +376,7 @@ process_remoteserver_log()
   echo "remote log: $REMOTE_LOG"
   echo ""
   if [ "$logRetrieved" = "1" ]; then
-    echo "# Found the log, now checking ofr ERRORS reported in the log" | tee -a $LOG
+    echo "# Found the log, now checking for ERRORS reported in the log" | tee -a $LOG
     gotErrors=$(cat $REMOTE_LOG | grep ERROR | wc -l)
     echo "gotErrors: $gotErrors"
     #If ERROR found in the log, delete the servers/$SERVER_NAME directory and the packageServer on controller host.
@@ -367,11 +406,6 @@ process_remoteserver_log()
       
   fi
   
-    
-  echo "" 
-  echo "remove_Remote_Member function completed" 
-  echo "" 
-
 }
 
 
@@ -456,7 +490,7 @@ join_remote_member()
 #The remote shell script runs which extracts the Liberty archive and joins the remote Lberty Server to the collective. 
 
 echo "#---------------------------------------------" 
-echo "# Now running prepare_remote_member() function" 
+echo "# Now running join_remote_member() function" 
 echo "#---------------------------------------------" 
 echo ""
 
@@ -609,7 +643,6 @@ else
 fi 
 
 
-#End prepare_remote_member
 } 
 
 
@@ -635,9 +668,8 @@ echo "========================="
   
  echo "" 
  echo "The log files can be found in: $LOGS"
- echo "ls -l $LOGS"
  echo ""  
- #ls -l $LOGS
+
  
   
  echo "" | tee -a $LOG 

@@ -2,56 +2,59 @@
 #  createController.sh 
 ######################
 
-if [[ "$#" -lt 2 ]]; then
-  echo "Missing command parameters, check usage"
-  echo "---------------------------------------"
-  echo "Usage:" 
-  echo "   createController.sh <controller_name> <controller_port>"
-  echo ""
-  echo "example: createController.sh stagingController  9095:9499"
-  echo ""
-  echo "---------------------------------------"
-  return 1
-fi
+## No input paramters required to run this script. We use dfault ports and names in scrit variables. 
 
-
-
-LIBERTY_ROOT_DIR=/home/techzone/lab-work/$1
-LAB_FILES=/home/techzone/liberty_admin_pot/LabFiles/lab_1040
-LOGS=$LAB_FILES/logs
+LAB_HOME=/home/techzone
+WORK_DIR="/home/techzone/lab-work"
+LIBERTY_ROOT_DIR=$WORK_DIR/liberty-controller
+LAB_FILES=$LAB_HOME/liberty_admin_pot
+LOGS=$WORK_DIR/logs
 LOG=$LOGS/0_createController.log
-SCRIPT_ARTIFACTS=$LAB_FILES/scripts/scriptArtifacts
+SCRIPT_ARTIFACTS=$LAB_FILES/lab-scripts/scriptArtifacts
 WLP_HOME=$LIBERTY_ROOT_DIR/wlp
 
 
 HOSTNAME=`hostname`
 echo $HOSTNAME
 
-CONTROLLER_NAME="$1"
+CONTROLLER_NAME="CollectiveController"
 
-HTTP_PORT=$(echo $2 | cut -f1 -d:)
-HTTPS_PORT=$(echo $2 | cut -f2 -d:)
-echo "http port: $HTTP_PORT"
-echo "https port: $HTTPS_PORT"
+#HTTP_PORT=$(echo $2 | cut -f1 -d:)
+#HTTPS_PORT=$(echo $2 | cut -f2 -d:)
+#echo "http port: $HTTP_PORT"
+#echo "https port: $HTTPS_PORT"
 
 #HTTPS_PORT=$1
 #echo "https port: $HTTPS_PORT"
 
 
-#HTTP_PORT="9091"
-#HTTPS_PORT="9494"
+HTTP_PORT="9091"
+HTTPS_PORT="9491"
 
 
-if [ -d "$LOGS" ]; then
-     rm -rf $LOGS ;
-     echo "remove the logs directory, if it exists: $LOG"
+
+#create the WORK_DIR for the labs
+if [ ! -d "$WORK_DIR" ]; then
+     mkdir $WORK_DIR ;
+     echo "Create the Working directory if it does not exist: $WORK_DIR"
 fi 
+
 
 if [ ! -d "$LOGS" ]; then
      mkdir $LOGS ;
      echo "Create Logs Directory: $LOGS"
 fi
 
+if [ -d "$LOGS" ]; then
+     rm $LOGS/0*.log ;
+     rm $LOGS/1*.log ;
+     rm $LOGS/2*.log ;
+     rm $LOGS/3*.log ;
+     rm $LOGS/4*.log ;
+     echo "remove the logs pertaining to the colective in directory: $LOGS"
+fi 
+
+exit 1
 
 echo "#----------------------------------" | tee $LOG
 echo "# Now running createController.sh" | tee -a $LOG
@@ -81,6 +84,14 @@ install_liberty_controller()
 
 
 #Create the $LIBERTY_ROOT, if it does not already exist
+
+echo "" | tee -a $LOG
+echo "# create the Librty root directory, if it does not exist" | tee -a $LOG  
+echo "mkdir $LIBERTY_ROOT_DIR" | tee -a $LOG
+echo "" | tee -a $LOG
+
+
+
 if [ ! -d "$LIBERTY_ROOT_DIR" ]; then
     echo "Create the $LIBERTY_ROOT_DIR directory"
     mkdir $LIBERTY_ROOT_DIR
@@ -88,6 +99,15 @@ fi
 
 echo "WLP_HOME: $WLP_HOME"
 sleep 7
+
+
+#Install Liberty for the collective controller using the archive method, if Liberty is not already installed.
+
+echo "" | tee -a $LOG
+echo "# Install Liberty for the Collective Controller, if its not already installed" | tee -a $LOG  
+echo "unzip -o ~/Student/LabFiles/controllerArchive.zip -d $LIBERTY_ROOT_DIR" | tee -a $LOG
+echo "" | tee -a $LOG
+
 
 if [ ! -d "$WLP_HOME" ]; then
     echo "Unzip Liberty to the $LIBERTY_ROOT directory"
@@ -191,11 +211,12 @@ cp $SCRIPT_ARTIFACTS/controllerOverride.xml $WLP_HOME/usr/servers/$CONTROLLER_NA
 echo "$SCRIPT_ARTIFACTS/controllerOverride.xml copied to $WLP_HOME/usr/servers/$CONTROLLER_NAME/configDropins/overrides" 
 
 
-#Override the Controller ports in the configDropins with the ports passed in as $1 parameter (Example: 9090:9490)
+#Override the Controller ports in the configDropins with the ports variables above 
 
   echo "" | tee -a $LOG
   echo "# Update the Controller Liberty server ports in the controllerOverrides.xml" | tee -a $LOG
   echo "sed -i 's/9090/'$HTTP_PORT'/g' $WLP_HOME/usr/servers/$CONTROLLER_NAME/configDropins/overrides/controllerOverride.xml" | tee -a $LOG
+  echo "" | tee -a $LOG
   echo "sed -i 's/9493/'$HTTPS_PORT'/g' $WLP_HOME/usr/servers/$CONTROLLER_NAME/configDropins/overrides/controllerOverride.xml" | tee -a $LOG
   echo "" | tee -a $LOG
   
@@ -244,7 +265,7 @@ echo ""
 echo "# --> Admin Center URL: https://server0.gym.lan:$HTTPS_PORT/adminCenter" | tee -a $LOG
 
 echo "" | tee -a $LOG
-echo "# End of createColntroller.sh script." | tee -a $LOG
+echo "# End of createController.sh script." | tee -a $LOG
 echo "" | tee -a $LOG
 
 
@@ -253,12 +274,17 @@ echo "" | tee -a $LOG
 
 #MAIN PROGRAM
 
-echo "========================="
-echo "Running 'addMemiber.sh'"
-echo "========================="
+echo "============================="
+echo "Running 'createController.sh'"
+echo "============================="
 
   install_liberty_controller
   
   create_collective
  
 
+ 
+      
+  
+ 
+ 

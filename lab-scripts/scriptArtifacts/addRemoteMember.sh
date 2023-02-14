@@ -29,17 +29,19 @@ echo "# Now running addRemoteMember.sh on $HOSTNAME" | tee -a $LOG
 echo "#--------------------------------------------------" | tee -a $LOG
 
 sleep 10
-
-WLP_ROOT_DIR=/opt/IBM/staging
-WLP_HOME=$WLP_ROOT_DIR/wlp
-PACKAGED_PBW_SERVER_NAME="pbwServerX"
-HOSTNAME=`hostname`
-CONTROLLER_HOST=server0.gym.lan
+#Assign varibales from input parms
 LIBERTY_SERVER=$1
 LIBERTY_VERSION=$2
 LIBERTY_HTTP_PORT=$3
 LIBERTY_HTTPS_PORT=$4
 CONTROLLER_HTTPS_PORT=$5
+
+WLP_ROOT_DIR=/opt/IBM/liberty-staging
+WLP_HOME=$WLP_ROOT_DIR/$LIBERTY_VERSION-$LIBERTY_SERVER/wlp
+PACKAGED_PBW_SERVER_NAME="pbwServerX"
+HOSTNAME=`hostname`
+CONTROLLER_HOST=server0.gym.lan
+
 LIBERTY_ARCHIVE="$LIBERTY_VERSION-$PACKAGED_PBW_SERVER_NAME.zip"
 
 
@@ -65,7 +67,13 @@ echo "-------------------------------------------------------"
 
 unzip_liberty_archive()
 {
-#Unzip the Liberty archive. Use -o option to overwrite files. 
+#Create the Liberty Root dir whare Liberty will be installed via archive method. 
+
+  echo "" | tee -a $LOG
+  echo "# Create the Liberty root directory where Librty will be installed, if it does not exist" | tee -a $LOG
+  echo "mkdir $WLP_ROOT_DIR" | tee -a $LOG
+  echo "" | tee -a $LOG  
+
 
   echo "create the $WLP_ROOT_DIR if it does not exist"
 
@@ -75,18 +83,35 @@ unzip_liberty_archive()
   fi
 
 
+  #Unzip the server package for the specified version of Liberty. The server package must already be created by using the libetyBuildManager scripts. 
+#Do not allow to unzip if the ServerName with ServerVersion already exists. 
+
   echo "" | tee -a $LOG
-  echo "# unzip the Liberty archive" | tee -a $LOG
-  echo "unzip -o /home/techzone/Downloads/$LIBERTY_ARCHIVE -d $WLP_ROOT_DIR" | tee -a $LOG
-  echo "" | tee -a $LOG
+  echo "# Unzip the Liberty archive to install Liberty" | tee -a $LOG
+  echo "unzip -o /home/techzone/Downloads/$LIBERTY_ARCHIVE -d $WLP_ROOT_DIR/$LIBERTY_VERSION-$LIBERTY_SERVER" | tee -a $LOG
+  echo "" | tee -a $LOG  
 
-  unzip -o /home/techzone/Downloads/$LIBERTY_ARCHIVE -d $WLP_ROOT_DIR
 
-  echo "" 
-  echo "Liberty server unpackaged in $WLP_ROOT_DIR" 
-  echo ""  
+  if [ ! -d "$WLP_ROOT_DIR/$LIBERTY_VERSION-$LIBERTY_SERVER" ]; then
+    echo "Unzip the server package"
+    unzip -o /home/techzone/Downloads/$LIBERTY_ARCHIVE -d $WLP_ROOT_DIR/$LIBERTY_VERSION-$LIBERTY_SERVER
+ 
+    echo "" 
+    echo "Liberty server unpackaged in $WLP_ROOT_DIR/$LIBERTY_VERSION-$LIBERTY_SERVER" 
+    echo ""  
+    sleep 3
+  else 
+    echo "A server already exists of name: $LIBERTY_VERSION-$LIBERTY_SERVER, and therefore cannot be extracted to directory: $LIBERTY_ROOT/$LIBERTY_VERSION-$LIBERTY_SERVER". 
+    echo ""
+    echo "The server may already be a member of the collective. "
+    echo " "
+    echo "Exiting!" 
+    exit 1
+  fi 
 
+  
   cd /home/techzone
+  sleep 5
 }
 
 apply_server_updates()
@@ -99,14 +124,21 @@ apply_server_updates()
 
 #Rename the serverX server dir to $SERVER_NAME passed it
 
-echo "Rename the default packaged server name $PACKAGED_PBW_SERVER_NAME to $LIBERTY_SERVER"
-mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$LIBERTY_SERVER
+  echo "" | tee -a $LOG
+  echo "# Rename the default packaged servername based on servername passed in on parameters" | tee -a $LOG
+  echo " mv $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$LIBERTY_SERVER" | tee -a $LOG
+  echo "" | tee -a $LOG  
+
+
+  echo "Rename the default packaged server name $PACKAGED_PBW_SERVER_NAME to $LIBERTY_SERVER"
+  mv $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$LIBERTY_SERVER
 
  
 #Update the Liberty server ports in the memberOverrides.xml with ports passed into script
   echo "" | tee -a $LOG
   echo "# Update the Liberty server ports in the memberOverrides.xml" | tee -a $LOG
   echo "sed -i 's/9084/'$LIBERTY_HTTP_PORT'/g' $WLP_HOME/usr/servers/$LIBERTY_SERVER/configDropins/overrides/memberOverride.xml" | tee -a $LOG
+  echo "" | tee -a $LOG
   echo "sed -i 's/9446/'$LIBERTY_HTTPS_PORT'/g' $WLP_HOME/usr/servers/$LIBERTY_SERVER/configDropins/overrides/memberOverride.xml" | tee -a $LOG
   echo "" | tee -a $LOG
   
@@ -115,11 +147,8 @@ mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$LIBE
   sed -i 's/9446/'$LIBERTY_HTTPS_PORT'/g' $WLP_HOME/usr/servers/$LIBERTY_SERVER/configDropins/overrides/memberOverride.xml 
   echo "HTTP port is now set to $LIBERTY_HTTP_PORT in configOverrides" 
   echo "HTTPS port is now set to $LIBERTY_HTTPS_PORT in configOverrides" 
- 
-
-
-
-
+  
+  sleep 5
 
 }
 
@@ -151,32 +180,10 @@ join_collective()
   if [[ $? != 0 ]]; then
      echo "#ERROR Failed to join the remote Liberty server $LIBERTY_SERVER to the collective. See the error message that was returned!" | tee -a $LOG
      
-     #cleanup the Remote Liberty Server directory
-     delete_liberty_server $LIBERTY_SERVER  
-         
      exit 1
   fi 
 
   echo "Liberty Server $LIBERTY_SERVER joined the collective and is visible in the Admin Center."  
-}
-
-
-delete_liberty_server()
-{
-
-#Delete the liberty server directory
-
-  if [ -d "$WLP_HOME/usr/servers/$LIBERTY_SERVER" ]; then
-    echo "" | tee -a $LOG
-    echo "# Delete the server directory"  | tee -a $LOG
-    echo "# rm -rf $WLP_HOME/usr/servers/$LIBERTY_SERVER" | tee -a $LOG
-    echo "" | tee -a $LOG
-
-    rm -rf $WLP_HOME/usr/servers/$LIBERTY_SERVER | tee -a $LOG
-
-    echo "$WLP_HOME/usr/servers/$LIBERTY_SERVER directory has been removed"  
-    echo "" 
-  fi
 }
 
 
