@@ -46,15 +46,15 @@ if [ ! -d "$LOGS" ]; then
 fi
 
 if [ -d "$LOGS" ]; then
-     rm $LOGS/0*.log ;
-     rm $LOGS/1*.log ;
-     rm $LOGS/2*.log ;
-     rm $LOGS/3*.log ;
-     rm $LOGS/4*.log ;
-     echo "remove the logs pertaining to the colective in directory: $LOGS"
+     rm -f $LOGS/0*.log ;
+     rm -f $LOGS/1*.log ;
+     rm -f $LOGS/2*.log ;
+     rm -f $LOGS/3*.log ;
+     rm -f $LOGS/4*.log ;
+#     echo "remove the logs pertaining to the colective in directory: $LOGS"
 fi 
 
-exit 1
+
 
 echo "#----------------------------------" | tee $LOG
 echo "# Now running createController.sh" | tee -a $LOG

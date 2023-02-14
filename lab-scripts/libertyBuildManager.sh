@@ -104,6 +104,26 @@ PBW_SERVER_NAME="pbwServerX"
 LOGS=$WORK_DIR/logs
 LOG=$LOGS/libertyBuildManager-$LIBERTY_VERSION-$COMMAND_INPUT.log
 
+
+#create the WORK_DIR for the labs
+if [ ! -d "$WORK_DIR" ]; then
+     mkdir $WORK_DIR ;
+     echo "Create the Working directory if it does not exist: $WORK_DIR"
+fi 
+
+
+if [ ! -d "$LOGS" ]; then
+     mkdir $LOGS ;
+     echo "Create Logs Directory: $LOGS"
+fi
+
+if [ -d "$LOGS" ]; then
+     rm $LOG ;
+     echo "remove old log file: $LOG"
+fi 
+
+
+
 # List the variables used in the script
 echo " "  | tee $LOG
 echo "#-------------------------------------------------------------" | tee -a  $LOG
@@ -123,6 +143,9 @@ echo "# Liberty Server name: $PBW_SERVER_NAME" | tee -a $LOG
 echo "# Logs directory: $LOGS" | tee -a $LOG
 echo "# Log file name: $LOG" | tee -a $LOG
 echo "#-------------------------------------------------------------" | tee -a  $LOG
+
+sleep 10
+
 
 
 
