@@ -495,24 +495,6 @@ echo "#---------------------------------------------"
 echo ""
 
 
-#Attempt to unregister the remote host to the collective. Its OK if its not already registered.
-
-
-echo ""
-echo "# Attempt to unregister the remote host from the collective. Its OK if its not already registered." 
-echo " "
-echo  "$CONTROLLER_WLP_HOME/bin/collective unregisterHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT" 
-echo "" 
-echo "--------------------------------------------------------------------------------" 
-echo "Reply 'y' when prompted to accept the certificate chain  (collective unregister)" 
-echo "--------------------------------------------------------------------------------" 
-
-sleep 10
-
-
-$CONTROLLER_WLP_HOME/bin/collective unregisterHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT
-
-
 #Register the remote host to the collective
 
 
@@ -534,12 +516,17 @@ sleep 10
 
 $CONTROLLER_WLP_HOME/bin/collective registerHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT --hostJavaHome=/opt/IBM/ibm-java-x86_64-80/jre/ --rpcuser=techzone --rpcUserPassword='IBMDem0s!'
 
+rc=$?
+echo "return code from register host command: $rc" 
 
-if [[ $? != 0 ]]; then
+# The command returns 0 if successful ad 255 if host is already registered. 
+if [[ $rc != 0 ]] && [[ $rc != 255 ]]; then
+
    echo "#ERROR Failed to register $MEMBER_HOSTNAME with the controller. See the error message that was returned!" | tee -a $LOG
    
    exit 1
-fi 
+fi
+
 
 echo "Host registered: $MEMBER_HOSTNAME" 
 
