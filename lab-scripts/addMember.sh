@@ -260,7 +260,7 @@ join_Local_Member()
 #Do not allow to unzip if the ServerName with ServerVersion already exists. 
 
   echo "" | tee -a $LOG
-  echo "# Unzip the Liberty server package to the Liberty root directoy" | tee -a $LOG
+  echo "# Unzip the Liberty server package to the Liberty root directory" | tee -a $LOG
   echo " unzip -o $FULL_PATH_PACKAGED_SERVER_PATH.zip -d $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME" | tee -a $LOG
   echo "" | tee -a $LOG  
 
@@ -309,13 +309,13 @@ join_Local_Member()
   echo "HTTPS port is now set to $HTTPS_PORT in configOverrides" 
   sleep 3
 
-  echo "joining local member to collecive...." 
+  echo "joining local member to collective...." 
   sleep 3
    
   #join a local server to the collective
   
   echo "" | tee -a $LOG
-  echo "# join local member to collecive." | tee -a $LOG
+  echo "# join local member to collective." | tee -a $LOG
   echo "" | tee -a $LOG
 
   echo "$WLP_HOME/bin/collective join $SERVER_NAME --host=$CONTROLLER_HOSTNAME --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --createConfigFile=$WLP_HOME/usr/servers/$SERVER_NAME/controller.xml"  | tee -a $LOG
@@ -653,10 +653,15 @@ echo "========================="
   fi
   
   
- echo "" 
- echo "The log files can be found in: $LOGS"
- echo ""  
-
+echo ""     
+echo "---------------------------------------------------------------"
+echo ""
+echo "Review the log file. It shows the commands the script executed."
+echo "" 
+echo "  $LOG"
+echo ""
+echo "---------------------------------------------------------------"
+echo ""   
  
   
  echo "" | tee -a $LOG 

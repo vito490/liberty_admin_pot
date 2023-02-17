@@ -2,7 +2,7 @@
 #  createController.sh 
 ######################
 
-## No input paramters required to run this script. We use dfault ports and names in scrit variables. 
+## No input parameters required to run this script. We use default ports and names in script variables. 
 
 LAB_HOME=/home/techzone
 WORK_DIR="/home/techzone/lab-work"
@@ -253,12 +253,15 @@ echo ""
 
 #print location of log files 
  
+echo ""     
+echo "---------------------------------------------------------------"
+echo ""
+echo "Review the log file. It shows the commands the script executed."
 echo "" 
-echo "---------------------------------------------------"
-echo "The log files can be found in: $LOGS"
-echo "ls -l $LOGS"
-echo "---------------------------------------------------"
-echo ""  
+echo "  $LOG"
+echo ""
+echo "---------------------------------------------------------------"
+echo ""   
 
 
 #Print the URL of the Liberty Admin Center

@@ -345,12 +345,12 @@ $WLP_HOME/bin/installUtility install collectiveMember-1.0 --acceptLicense
 
 #Install the dnamic routingfeature
 
-  echo "" | tee -a $LOG
-  echo "# Install the dynamicRouting-1.0 feature" | tee -a $LOG
-  echo "$WLP_HOME/bin/installUtility install dynamicRouting-1.0 --acceptLicense" | tee -a $LOG
-  echo "" | tee -a $LOG  
+#  echo "" | tee -a $LOG
+#  echo "# Install the dynamicRouting-1.0 feature" | tee -a $LOG
+#  echo "$WLP_HOME/bin/installUtility install dynamicRouting-1.0 --acceptLicense" | tee -a $LOG
+#  echo "" | tee -a $LOG  
 
-$WLP_HOME/bin/installUtility install dynamicRouting-1.0 --acceptLicense
+#$WLP_HOME/bin/installUtility install dynamicRouting-1.0 --acceptLicense
 
 
 #Install the session database persistance feature
@@ -520,11 +520,16 @@ if [[ "$COMMAND_INPUT" = "all" ]]; then
     sleep 5
     create_packaged_server
 fi
-        
-        
- echo "" 
- echo "The log files can be found in: $LOGS"
- echo ""          
+
+echo ""     
+echo "---------------------------------------------------------------"
+echo ""
+echo "Review the log file. It shows the commands the script executed."
+echo "" 
+echo "  $LOG"
+echo ""
+echo "---------------------------------------------------------------"
+echo ""      
         
 echo ""  | tee -a $LOG        
 echo "libertyBuildManager.sh completed"  | tee -a $LOG
