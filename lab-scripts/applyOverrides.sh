@@ -1,24 +1,38 @@
 #########################
-#  sessiondb-overrides.sh
+#  applyOverrides.sh
 #########################
-if [[ "$#" -lt 6 ]]; then
+numParms=$#
+numOverrides=$(($numParms-6))
+
+#echo "numOverrides $numOverrides"
+# assign the arguets entered into a string for processing
+str1=$@
+#echo "str1" $str1
+
+
+if [[ "$#" -lt 7 ]]; then
   echo "Missing command parameters, check usage"
   echo "---------------------------------------"
-   echo "Usage:" 
+  echo "Usage:" 
   echo "-n Liberty member name"
   echo "-v Verion of Liberty to install <22.0.0.8 | 22.0.0.12>"
   echo "-h Liberty member hostname" 
   echo "   specify 'server0.gym.lan' for creating a local collective member"
   echo "   specify 'server1.gym.lan' for creating a remote collective member"
+  echo "Overrides: Instruct which overrides to apply" 
+  echo "   specify 'SESSIONDB' for overriding server for sesion persistance"
+  echo "   specify 'DUMMY' for overriding server for dummy testing"
   echo ""
-  echo "example: asessiondb-overrides -n server1 -v 22.0.0.8 -h server0.gym.lan"
+  echo "example-local:  applyOverrides.sh -n serverName-v 22.0.0.8 -h server0.gym.lan SESSIONDB"
   echo ""
    echo "---------------------------------------"
   exit 1
 fi
 
 
-#iterate over the keys that are passed in, until all are processed
+
+
+#iterate over the keys that are passed in, until all are processed. Make sure all flags are included
 numKeys=0
 while [[ $# -gt 1 ]]
 
@@ -31,7 +45,7 @@ case $key in
     let "numKeys+=1" 
     shift # past argument
     ;;
-    -v|--verion)
+    -v|--version)
     LIBERTY_VERSION="$2"
      let "numKeys+=1"
     shift # past argument
@@ -46,10 +60,8 @@ shift # past argument or value
 #echo "numKeys: $numKeys"
 done
 
-#Make sure all of the required keys were passed in (-n -s -h)
+#Make sure all of the required keys were passed in (-n -w -h)
 if [[ $numKeys != 3 ]]; then
-  echo "---------------------------------------"
-  echo "Missing required FLAGS, check usage"
   echo "---------------------------------------"
   echo "Usage:" 
   echo "-n Liberty member name"
@@ -57,12 +69,18 @@ if [[ $numKeys != 3 ]]; then
   echo "-h Liberty member hostname" 
   echo "   specify 'server0.gym.lan' for creating a local collective member"
   echo "   specify 'server1.gym.lan' for creating a remote collective member"
+  echo "Overrides: Instruct which overrides to apply" 
+  echo "   specify 'SESSIONDB' for overriding server for sesion persistance"
+  echo "   specify 'DUMMY' for overriding server for dummy testing"
   echo ""
-  echo "example: sessiondb-overrides -n server1 -v 22.0.0.8 -p 9080:9443 -h server0.gym.lan"
+  echo "example-local:  applyOverrides.sh -n serverName-v 22.0.0.8 -h server0.gym.lan SESSIONDB"
   echo ""
-  echo "---------------------------------------"
+   echo "---------------------------------------"
   exit 1
 fi
+
+
+
 
 #Lab environment variable
 LAB_HOME=/home/techzone
@@ -70,7 +88,7 @@ WORK_DIR=$LAB_HOME/lab-work
 LAB_FILES=$LAB_HOME/liberty_admin_pot
 SCRIPT_ARTIFACTS=$LAB_FILES/lab-scripts/scriptArtifacts
 LOGS=$WORK_DIR/logs
-SAVE_COMMAND="sessiondb-override.sh -n $SERVER_NAME -v $LIBERTY_VERSION -h $MEMBER_HOSTNAME"
+SAVE_COMMAND="applyOverride.sh -n $SERVER_NAME -v $LIBERTY_VERSION -h $MEMBER_HOSTNAME"
 
 
 LIBERTY_ROOT=$WORK_DIR/liberty-staging
@@ -111,10 +129,12 @@ fi
 
 
 echo "#----------------------------------" 
-echo "# Now running sessiondb-overrides.sh" 
+echo "# Now running applyOverrides.sh" 
 echo "#----------------------------------" 
 
 sleep 5
+
+
 
 
 # List the variables used in the script
@@ -127,19 +147,34 @@ echo "# Command entered: $SAVE_COMMAND"
 echo "" 
 
 
-remote-sessiondb-overrides()
+
+
+process-overrides() 
+{ 
+ 
+  if [[ "$MEMBER_TYPE" = "remote" ]]; then 
+    remote-overrides
+  else 
+    local-overrides
+  fi
+
+}
+
+
+
+remote-overrides()
 {
 
+echo "# scp command: scp $OVERRIDE_FILE techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides"
 
-echo "# scp command: scp $SCRIPT_ARTIFACTS/sessiondb-override.xml techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides"
+scp $OVERRIDE_FILE techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides
+rc=$?
 
-scp $SCRIPT_ARTIFACTS/sessiondb-override.xml techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides
-
-if [[ $? = 0 ]]; then  
+if [[ $rc = 0 ]]; then  
   echo ""
   echo "============================================================="
   echo ""
-  echo "SUCCESS: Applying the sessiondb overides file was successful."
+  echo "SUCCESS: Applying the $override_value  overides file was successful."
   echo ""
   echo "============================================================="
   echo ""
@@ -147,7 +182,7 @@ else
   echo ""
   echo "============================================================="
   echo ""
-  echo "ERROR: Could not copy the sessiondb overrides file to the server $SERVER_NAME on host $MEMBER_HOSTNAME"
+  echo "ERROR: Could not copy the $override_value  overrides file to the server $SERVER_NAME on host $MEMBER_HOSTNAME"
   echo ""
   echo "---> Verify the server exists on the specified HOST."
   echo "---> Verify the input paramters on the script are corect and be sure you have specified the correct servername, hostname, and version."
@@ -160,27 +195,27 @@ fi
 
 
 
-local-sessiondb-overrides() 
-{ 
+
+local-overrides()
+{
  
-#copy the sessiondb overrides file if the server directroy exists
+    #echo "path: $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides"
+ 
+    if [ -d "$WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides" ]; then
+      #echo "The server $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides directory was not found"
+      #exit 1
+       
+      echo "# cp command: cp $OVERRIDE_FILE $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides"
 
-
-if [ -d "$WLP_HOME/usr/servers/$SERVER_NAME" ]; then
-  echo "# cp command: cp $SCRIPT_ARTIFACTS/sessiondb-override.xml $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides"
-
-  cp $SCRIPT_ARTIFACTS/sessiondb-override.xml $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides
-else
-  echo "The server $WLP_DIR/usr/servers/$SERVER_NAME directory was not found"
-  exit 1
-fi
-
-  
-if [[ $? = 0 ]]; then  
+      cp $OVERRIDE_FILE $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides
+      rc=$?
+    fi
+    
+  if [[ $rc = 0 ]]; then  
     echo ""
     echo "============================================================="
     echo ""
-    echo "SUCCESS: Applying the sessiondb overides file was successful."
+    echo "SUCCESS: Applying the $override_value overides file was successful."
     echo ""
     echo "============================================================="
     echo ""  
@@ -188,32 +223,55 @@ if [[ $? = 0 ]]; then
     echo ""
     echo "============================================================="
     echo ""
-    echo "ERROR: Could not copy the sessiondb overrides file to the server $SERVER_NAME on host $MEMBER_HOSTNAME"
+    echo "ERROR: Could not copy the $override_value overrides file to the server $SERVER_NAME on host $MEMBER_HOSTNAME"
     echo ""
     echo "---> Verify the server exists on the specified HOST."
     echo "---> Verify the input paramters on the script are corect and be sure you have specified the correct servername, hostname, and version."
     echo ""
     echo "============================================================="
     exit 1
-fi  
+  fi  
 
 } 
+#############
+#Main PROGRAM 
+#############
 
 
-#MAIN PROGRAM
+PROCESS_OVERRIDE=""
 
-echo "================================"
-echo "Running 'sessiondb-overrides.sh'"
-echo "================================"
-   
-  if [[ "$MEMBER_TYPE" = "remote" ]]; then 
-    remote-sessiondb-overrides
-  else 
-    local-sessiondb-overrides
-  fi
- 
+
+# The oveerides parrms begin at parameter 7, after the flags.... 
+for ((n=7; n<=$numParms; n++))
+  do 
+#get the nth paramter, starting at 7, which will be the override parms on the command
+     override_value=`echo "$str1" | cut -d ' ' -f${n}`
+      
+#if overide parm is "SESSIONDB" then let it be know we found it      
+     if [[ $override_value == "SESSIONDB" ]]; then
+         PROCESS_OVERRIDE="SESSIONDB"
+         echo "--------------------------"
+         echo ""
+         echo "Applying SESSIONDB override"
+         echo ""
+         echo "--------------------------"
+         OVERRIDE_FILE=$SCRIPT_ARTIFACTS/httpSessionPersistence.xml
+         process-overrides
+     fi      
+
+
+#place holder for adding support of additinal overrides in the labs      
+     if [[ $override_value == "DUMMY" ]]; then
+         PROCESS_OVERRIDE="DUMMY"
+         echo "--------------------------"
+         echo ""
+         echo "Applying DUMMY override"
+         echo ""
+         echo "--------------------------"
+         OVERRIDE_FILE=$SCRIPT_ARTIFACTS/dummy.xml
+         process-overrides
+     fi      
   
- echo "" 
- echo "# End of sessiondb-overrides.sh script."
- echo ""
- 
+done
+
+
