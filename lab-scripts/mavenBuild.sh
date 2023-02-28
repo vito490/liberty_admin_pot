@@ -64,7 +64,7 @@ else
     exit 1	
 fi
 
-COMMAND_SAVE="libertyBuildManager.sh -v $LIBERTY_VERSION" 
+COMMAND_SAVE="mavenBuild.sh -v $LIBERTY_VERSION" 
 HOME_DIR=/home/techzone
 PBW_SERVER_NAME="pbwServerX"
 LAB_FILES_DIR=$HOME_DIR/liberty_admin_pot
