@@ -14,7 +14,7 @@ PluginRoot=/opt/IBM/WebSphere/Plugins/
 HOSTNAME=`hostname`
 echo $HOSTNAME
 
-cp $LAB_FILES/dynamicRouting.xml $WLP_HOME/usr/servers/CollectiveController/configDropins/overrides/.
+cp $LAB_FILES/scriptArtifacts/dynamicRouting.xml $WLP_HOME/usr/servers/CollectiveController/configDropins/overrides/.
 sleep 5
 $IHS_HOME/bin/apachectl stop
 if [ -e "$SCRIPTS_DIR/plugin-cfg.xml" ]; then
