@@ -156,7 +156,7 @@ clone-repo()
   git clone $SRC_MAVEN_GIT_REPO
   rc1=$?
   
-  echo "Return codeform git clone: $rc"
+  echo "Return code from git clone: $rc1"
     
   if [[ "$rc1" != "0" ]]; then
     echo ""
@@ -207,7 +207,7 @@ maven-build()
 
   mvn -Dliberty.runtime.version=$LIBERTY_VERSION -DskipTests=true clean install
   rc2=$?
-  echo "resturn code form maven build: $rc"
+  echo "resturn code from maven build: $rc2"
 
   if [[ "$rc2" != "0" ]]; then
     echo ""
@@ -299,10 +299,17 @@ fi
 
 #Copy the server package from the Maven build output to the working directory of the labs. 
 
-    echo "copy Server Package Archive: \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip:"
-    
-    \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip
-    rc3=$?
+
+  echo "" | tee -a $LOG
+  echo "# copy Server Package Archive: \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD" | tee -a $LOG
+  echo "\cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip" | tee -a $LOG
+  echo "" | tee -a $LOG 
+
+
+  \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip
+  rc3=$?
+  
+  echo "Return code from the post-build step is: $rc3"
     
   if [[ "$rc3" != "0" ]]; then
     echo ""
