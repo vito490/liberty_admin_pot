@@ -138,7 +138,7 @@ clone-repo()
   if [ -d "$SRC_MAVEN_LAB_FILES" ]; then
      rm -rf $SRC_MAVEN_LAB_FILES ;
      echo ""
-     echo "remove exiing cloned source code repo for maven builds: $SRC_MAVEN_LAB_FILES"
+     echo "cleanup existing cloned source code repo for maven builds: $SRC_MAVEN_LAB_FILES"
      echo ""
   fi
   
@@ -200,7 +200,7 @@ maven-build()
   
   
   echo "" | tee -a $LOG
-  echo "# Run the Maven build proess" | tee -a $LOG
+  echo "# Run the Maven build process" | tee -a $LOG
   echo "mvn -Dliberty.runtime.version=$LIBERTY_VERSION -DskipTests=true clean install" | tee -a $LOG
   echo "" | tee -a $LOG  
   sleep 5
@@ -219,7 +219,8 @@ maven-build()
      echo ""
      echo "Maven Build Successfully completed."
      echo ""
-     echo "The build output is located in the following directory: $SRC_MAVEN_LAB_FILES/liberty-server/target"
+     echo "The build output is located in the following directory:" 
+     echo "$SRC_MAVEN_LAB_FILES/liberty-server/target"
      echo ""
   fi  
  
@@ -298,7 +299,7 @@ fi
 
 #Copy the server package from the Maven build output to the working directory of the labs. 
 
-  echo "copy Server Package Archive: \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip:"
+    echo "copy Server Package Archive: \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip:"
     
     \cp $SERVER_PACKAGE_FROM_MAVEN_BUILD $FULL_PATH_PACKAGED_SERVER_PATH.zip
     rc3=$?
@@ -311,9 +312,14 @@ fi
     echo ""
     exit 1
   else 
-     echo ""
-     echo "The Server package was succesfully copied to the working directry for the labs: $FULL_PATH_PACKAGED_SERVER_PATH.zip"
-     echo ""
+     echo "" | tee -a $LOG
+     echo "=========================================================" | tee -a $LOG
+     echo "The Server package was succesfully created and copied to:"  | tee -a $LOG
+     echo"" | tee -a $LOG
+     echo "$FULL_PATH_PACKAGED_SERVER_PATH.zip" | tee -a $LOG
+     echo "" | tee -a $LOG
+     echo "=========================================================" | tee -a $LOG
+     echo "" | tee -a $LOG
   fi  
     
 
