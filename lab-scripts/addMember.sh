@@ -436,7 +436,7 @@ echo "" | tee -a $LOG
   
   echo "WAITING for Firewall rules to be reloaded............ " 
 
-  sleep 15
+  sleep 10
   
 
 #List the ports 
@@ -549,23 +549,35 @@ if [[ $? != 0 ]]; then
    exit 1
 fi 
 
-echo "Test connection between Controller and host $MEMBER_HOSTNAME completed." 
+echo "Test connection between Controller and host $MEMBER_HOSTNAME completed succesfully." 
+echo ""
 
 sleep 7
     
-echo "---------------------------------------------------------------------------"
-echo "You will be prompted multiple times for the password for the techzone user"
-echo " as files are securly copied to the remote VM, and ssh into the remote vm to run scripts."
-echo ""
-echo "---> Enter IBMDem0s! as the password when prompted."
-echo "---------------------------------------------------------------------------"
-sleep 7
+#echo "---------------------------------------------------------------------------"
+#echo "You will be prompted multiple times for the password for the techzone user"
+#echo " as files are securly copied to the remote VM, and ssh into the remote vm to run scripts."
+#echo ""
+#echo "---> Enter IBMDem0s! as the password when prompted."
+#echo "---------------------------------------------------------------------------"
+#sleep 7
     
 
 echo " " | tee -a $LOG
 echo "# Copy the Liberty Archive $PACKAGED_ARCHIVE_NAME to the remote server $MEMBER_HOSTNAME" | tee -a $LOG
 echo "scp $FULL_PATH_PACKAGED_SERVER_PATH.zip techzone@$MEMBER_HOSTNAME:/home/techzone/Downloads" | tee -a $LOG
 echo " " | tee -a $LOG
+
+
+  
+echo "---------------------------------------------------------------------------"
+echo "--->  Send the Liberty Server Package to the remote server"
+echo ""
+echo "You will be prompted for the password for the techzone user"
+echo ""
+echo "Enter IBMDem0s! as the password when prompted."
+echo "---------------------------------------------------------------------------"
+sleep 5
 
 scp $FULL_PATH_PACKAGED_SERVER_PATH.zip  techzone@$MEMBER_HOSTNAME:/home/techzone/Downloads
 
@@ -574,6 +586,17 @@ echo " " | tee -a $LOG
 echo "# Copy $LAB_FILES/addRemoteMember.sh to the remote server $MEMBER_HOSTNAME" | tee -a $LOG
 echo "scp $LAB_FILES/scripts/addRemoteMember.sh techzone@$MEMBER_HOSTNAME:/home/techzone" | tee -a $LOG
 echo " "  | tee -a $LOG
+
+ 
+echo "---------------------------------------------------------------------------"
+echo "--->  Send the shell script to the remote server"
+echo ""
+echo "You will be prompted for the password for the techzone user"
+echo ""
+echo "Enter IBMDem0s! as the password when prompted."
+echo "---------------------------------------------------------------------------"
+sleep 5
+
 
 scp $SCRIPT_ARTIFACTS/addRemoteMember.sh techzone@$MEMBER_HOSTNAME:/home/techzone
 
@@ -584,6 +607,16 @@ echo " " | tee -a $LOG
 
 
 #Join the remote server to the collective. The -t option is REQUIRED to run the ssh in interactive mode. Otherwise the command will fail, as you will be unable to respond to accept the key chain during the join command. 
+
+
+echo "---------------------------------------------------------------------------"
+echo "--->  SSH into the remote server and run the script to deploy Liberty"
+echo ""
+echo "You will be prompted for the password for the techzone user"
+echo ""
+echo "Enter IBMDem0s! as the password when prompted."
+echo "---------------------------------------------------------------------------"
+sleep 5
 
 ssh -t $MEMBER_HOSTNAME . /home/techzone/addRemoteMember.sh $SERVER_NAME $LIBERTY_VERSION $HTTP_PORT $HTTPS_PORT $CONTROLLER_HTTPS_PORT
 
@@ -605,6 +638,8 @@ echo " " | tee -a $LOG
 
   
 echo "---------------------------------------------------------------------------"
+echo "--->  Retreive the addRemoteMember.log from the remote server"
+echo ""
 echo "You will be prompted for the password for the techzone user"
 echo ""
 echo "Enter IBMDem0s! as the password when prompted."
