@@ -3,6 +3,41 @@
 ######################
 
 ## No input parameters required to run this script. We use default ports and names in script variables. 
+## Hidden option "--force" will force the controller to be blown away and recreated. However any collective members will be orphaned and manual cleanup would be required. 
+
+numParms=$#
+FORCE="false"
+#only set force if the first argument = "--force"
+if [[ "$1" =  "--force" ]]; then
+  FORCE="true"
+
+  echo ""
+  echo "--------------------------------------------------------------"
+  echo " You have specified the --force flag."
+  echo " This will force the Collective and Collective Controller to be " 
+  echo " deleted and recreated." 
+  echo ""
+  echo "    --> Any existing collective members will be orphaned." 
+  echo ""
+  echo "    --> Manual ceanup of the members, their java processes will be required."
+  echo "--------------------------------------------------------------"
+  echo ""
+  
+#Have user reply "y" to continue the script 
+read -p "Are you sure you want to FORCE the re-creation of the Collective? (y/n)? " answer
+case ${answer:0:1} in
+    y|Y )
+        echo continuing...
+    ;;
+    * )
+        exit 1
+    ;;
+esac
+  
+fi
+
+echo "Force: $FORCE"
+
 
 LAB_HOME=/home/techzone
 WORK_DIR="/home/techzone/lab-work"
@@ -75,6 +110,49 @@ echo "#--------------------------------------------------------------" | tee -a 
 echo "" | tee -a $LOG
 
 sleep 7
+
+
+check_for_controller()
+{
+# if the --force flag is not specified, bail out if controller exists. But ensure it s started before bailing out. 
+# see if controller directroy structure exists
+# if so, see if controller is running
+#  if not, start it. 
+#Bail out 
+
+  if [[ "$FORCE" =  "false" ]] && [[ -d "$WLP_HOME/usr/servers/$CONTROLLER_NAME" ]]; then
+
+    echo "--force NOT specified, but the Contoller seems to already be created."
+    echo ""
+     
+    $WLP_HOME/bin/server status $CONTROLLER_NAME ;
+    rc=$?
+    echo "rc: $rc"
+    if [[ "$rc" = "1" ]]; then
+      echo "Start $CONTROLLER_NAME" 
+      $WLP_HOME/bin/server start $CONTROLLER_NAME ;
+      sleep 5
+    fi
+    
+     echo "   Exiting!"
+     echo ""
+# Exit because the  --force flag was not specified. 
+    echo "--------------------------------------------------------------"
+    echo " The Collective Controller already exits."
+    echo "" 
+  
+#Print the URL of the Liberty Admin Center
+    echo " --> Admin Center URL: https://server0.gym.lan:$HTTPS_PORT/adminCenter" 
+    echo ""
+    echo "--------------------------------------------------------------"
+    echo ""
+    echo "# End of createController.sh script."
+    echo ""
+
+  fi
+
+
+}
 
 
 install_liberty_controller()
@@ -281,10 +359,13 @@ echo "============================="
 echo "Running 'createController.sh'"
 echo "============================="
 
-  install_liberty_controller
+  check_for_controller
+
+  if [[ "$FORCE" =  "true" ]]; then
+    install_liberty_controller
   
-  create_collective
- 
+    create_collective
+  fi 
 
  
       
