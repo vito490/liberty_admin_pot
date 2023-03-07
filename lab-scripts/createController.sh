@@ -120,8 +120,18 @@ check_for_controller()
 #  if not, start it. 
 #Bail out 
 
-  if [[ "$FORCE" =  "false" ]] && [[ -d "$WLP_HOME/usr/servers/$CONTROLLER_NAME" ]]; then
+controller_exists=""
 
+  if [[ ! -d "$WLP_HOME/usr/servers/$CONTROLLER_NAME" ]]; then
+    echo "Controller does not exist, creating it now."
+    controller_exists="false"
+  fi   
+ 
+
+
+
+  if [[ "$FORCE" =  "false" ]] && [[ -d "$WLP_HOME/usr/servers/$CONTROLLER_NAME" ]]; then
+    controller_exists="true"
     echo "--force NOT specified, but the Contoller seems to already be created."
     echo ""
      
@@ -149,6 +159,7 @@ check_for_controller()
     echo "# End of createController.sh script."
     echo ""
 
+    exit 1
   fi
 
 
@@ -361,7 +372,11 @@ echo "============================="
 
   check_for_controller
 
-  if [[ "$FORCE" =  "true" ]]; then
+  if [[ "$FORCE" =  "true" ]] || [[ "$controller_exists"="false" ]]; then
+   
+    echo ""
+    echo "Install and create the Controller and Collective"
+    echo ""
     install_liberty_controller
   
     create_collective
