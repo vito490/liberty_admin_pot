@@ -11,7 +11,7 @@ if [[ "$#" -lt 2 ]]; then
   echo "Missing command parameters, check usage"
   echo "---------------------------------------"
   echo "Usage:" 
-  echo "-v Verion of Liberty to install <22.0.0.8 | 22.0.0.12>"
+  echo "-v Version of Liberty to install <22.0.0.8 | 22.0.0.12>"
   echo ""
   echo "example: mavenBuild.sh -v 22.0.0.8"
   echo ""
@@ -28,7 +28,7 @@ do
 key="$1"
 #echo "key is: $key"
 case $key in
-    -v|--verion)
+    -v|--version)
     LIBERTY_VERSION="$2"
      let "numKeys+=1"
     shift # past argument
@@ -43,7 +43,7 @@ if [[ $numKeys != 1 ]]; then
   echo "Missing command parameters, check usage"
   echo "---------------------------------------"
   echo "Usage:" 
-  echo "-v Verion of Liberty to install <22.0.0.8 | 22.0.0.12>"
+  echo "-v Version of Liberty to install <22.0.0.8 | 22.0.0.12>"
   echo ""
   echo "example: mavenBuild.sh -v 22.0.0.8"
   echo ""
