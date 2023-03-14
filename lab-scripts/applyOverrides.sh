@@ -278,10 +278,10 @@ for ((n=7; n<=$numParms; n++))
            fi
            echo "--------------------------"
            echo ""
-           echo "Updating remote firewall rules. Re-enter password"
+           echo "Updating remote firewall rules"
            echo ""
            echo "--------------------------"
-           ssh techzone@$MEMBER_HOSTNAME "sudo firewall-cmd --permanent --zone=public --add-port=${LIBERTY_HTTPS_PORT}/tcp && sudo firewall-cmd --reload"
+           sshpass -p "IBMDem0s!" ssh techzone@$MEMBER_HOSTNAME "sudo firewall-cmd --permanent --zone=public --add-port=${LIBERTY_HTTPS_PORT}/tcp && sudo firewall-cmd --reload"
            rc=$?
            if [ "$rc" -eq 0 ]; then
              echo "--------------------------"
@@ -327,4 +327,3 @@ for ((n=7; n<=$numParms; n++))
      fi      
   
 done
-
