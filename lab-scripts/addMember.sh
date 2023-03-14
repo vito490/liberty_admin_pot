@@ -557,8 +557,6 @@ sleep 7
 #echo "---------------------------------------------------------------------------"
 #echo "You will be prompted multiple times for the password for the techzone user"
 #echo " as files are securly copied to the remote VM, and ssh into the remote vm to run scripts."
-#echo ""
-#echo "---> Enter IBMDem0s! as the password when prompted."
 #echo "---------------------------------------------------------------------------"
 #sleep 7
     
@@ -572,14 +570,10 @@ echo " " | tee -a $LOG
   
 echo "---------------------------------------------------------------------------"
 echo "--->  Send the Liberty Server Package to the remote server"
-echo ""
-echo "You will be prompted for the password for the techzone user"
-echo ""
-echo "Enter IBMDem0s! as the password when prompted."
 echo "---------------------------------------------------------------------------"
 sleep 5
 
-scp $FULL_PATH_PACKAGED_SERVER_PATH.zip  techzone@$MEMBER_HOSTNAME:/home/techzone/Downloads
+sshpass -p "IBMDem0s!" scp $FULL_PATH_PACKAGED_SERVER_PATH.zip  techzone@$MEMBER_HOSTNAME:/home/techzone/Downloads
 
 
 echo " " | tee -a $LOG
@@ -590,15 +584,11 @@ echo " "  | tee -a $LOG
  
 echo "---------------------------------------------------------------------------"
 echo "--->  Send the shell script to the remote server"
-echo ""
-echo "You will be prompted for the password for the techzone user"
-echo ""
-echo "Enter IBMDem0s! as the password when prompted."
 echo "---------------------------------------------------------------------------"
 sleep 5
 
 
-scp $SCRIPT_ARTIFACTS/addRemoteMember.sh techzone@$MEMBER_HOSTNAME:/home/techzone
+sshpass -p "IBMDem0s!" scp $SCRIPT_ARTIFACTS/addRemoteMember.sh techzone@$MEMBER_HOSTNAME:/home/techzone
 
 echo " " | tee -a $LOG
 echo "# ssh to $MEMBER_HOSTNAME and run addRemoteMember.sh" | tee -a $LOG
@@ -611,14 +601,10 @@ echo " " | tee -a $LOG
 
 echo "---------------------------------------------------------------------------"
 echo "--->  SSH into the remote server and run the script to deploy Liberty"
-echo ""
-echo "You will be prompted for the password for the techzone user"
-echo ""
-echo "Enter IBMDem0s! as the password when prompted."
 echo "---------------------------------------------------------------------------"
 sleep 5
 
-ssh -t $MEMBER_HOSTNAME . /home/techzone/addRemoteMember.sh $SERVER_NAME $LIBERTY_VERSION $HTTP_PORT $HTTPS_PORT $CONTROLLER_HTTPS_PORT
+sshpass -p "IBMDem0s!" ssh -t $MEMBER_HOSTNAME . /home/techzone/addRemoteMember.sh $SERVER_NAME $LIBERTY_VERSION $HTTP_PORT $HTTPS_PORT $CONTROLLER_HTTPS_PORT
 
 
 # We are back from running the addRemoteMember script. Now get the logs from the remote host
@@ -639,14 +625,10 @@ echo " " | tee -a $LOG
   
 echo "---------------------------------------------------------------------------"
 echo "--->  Retreive the addRemoteMember.log from the remote server"
-echo ""
-echo "You will be prompted for the password for the techzone user"
-echo ""
-echo "Enter IBMDem0s! as the password when prompted."
 echo "---------------------------------------------------------------------------"
 sleep 5
 
-scp techzone@$MEMBER_HOSTNAME:/home/techzone/2_addRemoteMember.log $REMOTE_LOG
+sshpass -p "IBMDem0s!" scp techzone@$MEMBER_HOSTNAME:/home/techzone/2_addRemoteMember.log $REMOTE_LOG
 
 echo ""
 echo "The remote log name is: $REMOTE_LOG"

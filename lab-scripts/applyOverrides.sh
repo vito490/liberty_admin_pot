@@ -167,7 +167,7 @@ remote-overrides()
 
 echo "# scp command: scp $OVERRIDE_FILE techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides"
 
-scp $OVERRIDE_FILE techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides
+sshpass -p "IBMDem0s!" scp $OVERRIDE_FILE techzone@$MEMBER_HOSTNAME:$WLP_HOME_REMOTE/$LIBERTY_VERSION-$SERVER_NAME/wlp/usr/servers/$SERVER_NAME/configDropins/overrides
 rc=$?
 
 if [[ $rc = 0 ]]; then  
@@ -273,5 +273,4 @@ for ((n=7; n<=$numParms; n++))
      fi      
   
 done
-
 
