@@ -15,7 +15,8 @@
     	<user>admin</user>
     </administrator-role>
     <httpEndpoint id="defaultHttpEndpoint"
-                  httpPort="9090"
+                  host="*"
+				  httpPort="9090"
                   httpsPort="9493" />
                   
 </server>
