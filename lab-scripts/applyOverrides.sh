@@ -21,6 +21,8 @@ if [[ "$#" -lt 7 ]]; then
   echo "   specify 'server1.gym.lan' for creating a remote collective member"
   echo "Overrides: Instruct which overrides to apply" 
   echo "   specify 'SESSIONDB' for overriding server for sesion persistance"
+  echo "   specify 'MONITOR' for enabling monitor-1.0"
+  echo "   specify 'TIMING' for enabling requestTiming-1.0"
   echo "   specify 'DUMMY' for overriding server for dummy testing"
   echo ""
   echo "example-local:  applyOverrides.sh -n serverName-v 22.0.0.8 -h server0.gym.lan SESSIONDB"
@@ -71,6 +73,8 @@ if [[ $numKeys != 3 ]]; then
   echo "   specify 'server1.gym.lan' for creating a remote collective member"
   echo "Overrides: Instruct which overrides to apply" 
   echo "   specify 'SESSIONDB' for overriding server for sesion persistance"
+  echo "   specify 'MONITOR' for enabling monitor-1.0"
+  echo "   specify 'TIMING' for enabling requestTiming-1.0"
   echo "   specify 'DUMMY' for overriding server for dummy testing"
   echo ""
   echo "example-local:  applyOverrides.sh -n serverName-v 22.0.0.8 -h server0.gym.lan SESSIONDB"
@@ -89,7 +93,6 @@ LAB_FILES=$LAB_HOME/liberty_admin_pot
 SCRIPT_ARTIFACTS=$LAB_FILES/lab-scripts/scriptArtifacts
 LOGS=$WORK_DIR/logs
 SAVE_COMMAND="applyOverride.sh -n $SERVER_NAME -v $LIBERTY_VERSION -h $MEMBER_HOSTNAME"
-
 
 LIBERTY_ROOT=$WORK_DIR/liberty-staging
 WLP_HOME="$LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME/wlp"  #this needs to be the liberty home for the verion of Liberty unzipped
@@ -257,7 +260,58 @@ for ((n=7; n<=$numParms; n++))
          echo "--------------------------"
          OVERRIDE_FILE=$SCRIPT_ARTIFACTS/httpSessionPersistence.xml
          process-overrides
-     fi      
+     elif [[ $override_value == "MONITOR" ]]; then
+         PROCESS_OVERRIDE="MONITOR"
+         echo "--------------------------"
+         echo ""
+         echo "Applying MONITOR override"
+         echo ""
+         echo "--------------------------"
+         OVERRIDE_FILE=$SCRIPT_ARTIFACTS/monitor.xml
+         process-overrides
+
+         # Apply the firewall update
+         if [ "${MEMBER_HOSTNAME}" != "server0.gym.lan" ]; then
+           LIBERTY_HTTPS_PORT=""
+           if [ "${MEMBER_HOSTNAME}" == "server1.gym.lan" ]; then
+             LIBERTY_HTTPS_PORT="9442"
+           fi
+           echo "--------------------------"
+           echo ""
+           echo "Updating remote firewall rules. Re-enter password"
+           echo ""
+           echo "--------------------------"
+           ssh techzone@$MEMBER_HOSTNAME "sudo firewall-cmd --permanent --zone=public --add-port=${LIBERTY_HTTPS_PORT}/tcp && sudo firewall-cmd --reload"
+           rc=$?
+           if [ "$rc" -eq 0 ]; then
+             echo "--------------------------"
+             echo ""
+             echo "Successfully applied firewall rule"
+             echo ""
+             echo "--------------------------"
+           else
+             echo ""
+             echo "============================================================="
+             echo ""
+             echo "ERROR: Could not open firewall port $LIBERTY_HTTPS_PORT on host $MEMBER_HOSTNAME"
+             echo ""
+             echo "---> Review any errors in the ssh command above."
+             echo "---> Verify the server exists on the specified HOST."
+             echo ""
+             echo "============================================================="
+             exit 1
+           fi
+         fi
+     elif [[ $override_value == "TIMING" ]]; then
+         PROCESS_OVERRIDE="TIMING"
+         echo "--------------------------"
+         echo ""
+         echo "Applying TIMING override"
+         echo ""
+         echo "--------------------------"
+         OVERRIDE_FILE=$SCRIPT_ARTIFACTS/requestTiming.xml
+         process-overrides
+     fi
 
 
 #place holder for adding support of additinal overrides in the labs      
