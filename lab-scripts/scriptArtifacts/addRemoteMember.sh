@@ -193,15 +193,15 @@ setup_firewall_ports()
 
 #The Application HTTP ports need to be opened
 echo "" | tee -a $LOG
-echo "# The Application HTTP port $LIBERTY_HTTP_PORT needs to be open for the HTTP server to route traffic to the Liberty server." | tee -a $LOG
+echo "# The Application HTTPS port $LIBERTY_HTTPS_PORT needs to be open for the HTTPS server to route traffic to the Liberty server." | tee -a $LOG
 echo "" | tee -a $LOG
 
 #open application HTTP port, if not found
-  appHttpPortFound=$(sudo firewall-cmd --list-ports | grep $LIBERTY_HTTP_PORT/tcp | wc -l)
+  appHttpPortFound=$(sudo firewall-cmd --list-ports | grep $LIBERTY_HTTPS_PORT/tcp | wc -l)
 
   if [[ "$appHttpPortFound" -lt 1 ]]; then
-    echo "Need to open port $LIBERTY_HTTP_PORT, the application HTTP port"
-    sudo firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTP_PORT/tcp 
+    echo "Need to open port $LIBERTY_HTTPS_PORT, the application HTTPS port"
+    sudo firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTPS_PORT/tcp 
     sleep 7
   fi  
     
@@ -211,7 +211,7 @@ echo "" | tee -a $LOG
   
   echo "WAITING for Firewall rules to reload............ " 
   echo "" | tee -a $LOG
-  sleep 15
+  sleep 7
   
 
 #List the ports 
@@ -224,9 +224,9 @@ echo "" | tee -a $LOG
   echo "#INFORMATION ONLY!!! The ports were opened by using the following commands on Host $HOSTNAME"  | tee -a $LOG
   echo "" | tee -a $LOG
   echo "#----------------------------------------------------------------------------" | tee -a $LOG
-  echo "# Note: The Liberty applications HTTP port must be opened to run through an HTTP Server" | tee -a $LOG 
+  echo "# Note: The Liberty applications HTTPS port must be opened to run through an HTTPS Server" | tee -a $LOG 
   echo "# firewall-cmd --list-ports" | tee -a $LOG 
-  echo "# firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTP_PORT/tcp" | tee -a $LOG
+  echo "# firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTPS_PORT/tcp" | tee -a $LOG
   echo "# firewall-cmd --reload" | tee -a $LOG
   echo "#----------------------------------------------------------------------------" | tee -a $LOG
  echo "" | tee -a $LOG
@@ -234,23 +234,23 @@ echo "" | tee -a $LOG
 #verify the ports are opened. Exit of they are not opened.  
  
 #Get updated state... 
-   appHttpPortFound=$(sudo firewall-cmd --list-ports | grep $LIBERTY_HTTP_PORT/tcp | wc -l) 
+   appHttpPortFound=$(sudo firewall-cmd --list-ports | grep $LIBERTY_HTTPS_PORT/tcp | wc -l) 
    
 
   if [[ "$appHttpPortFound" -gt "0" ]]; then
     echo "----------------------------------------------------------------------------" 
-    echo "Required port $LIBERTY_HTTP_PORT for the Liberty Appliction Server HTTP port is opened" 
+    echo "Required port $LIBERTY_HTTPS_PORT for the Liberty Appliction Server HTTPS port is opened" 
     echo "Script will continue!" 
     echo "----------------------------------------------------------------------------" 
     sleep 7
   else 
-    echo "Required port $LIBERTY_HTTP_PORT for the Liberty Appliction Server HTTP port NOT opened"
+    echo "Required port $LIBERTY_HTTPS_PORT for the Liberty Appliction Server HTTPS port NOT opened"
     echo "Exiting!" 
     echo ""
     echo "open the required ports using the following commands on the Liberty Controller VM." 
     echo "Then rerun the script."  
     echo "----------------------------------------------------------------------------" 
-    echo "sudo firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTP_PORT/tcp" 
+    echo "sudo firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTPS_PORT/tcp" 
     echo "----------------------------------------------------------------------------" 
   
     exit 1

@@ -436,7 +436,7 @@ echo "" | tee -a $LOG
   
   echo "WAITING for Firewall rules to be reloaded............ " 
 
-  sleep 10
+  sleep 7
   
 
 #List the ports 

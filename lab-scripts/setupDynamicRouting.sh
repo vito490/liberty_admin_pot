@@ -51,6 +51,13 @@ if [ -e "/tmp/plugin-key.crl" ]; then
      echo "/tmp/plugin-key.crl file removed"
 fi
 
+echo ""
+echo "-----------------------------------------------------------------------------------------" 
+echo "Reply 'y' when prompted to accept the certificate chain (secure connection to Controller)" 
+echo "-----------------------------------------------------------------------------------------" 
+echo "" 
+
+sleep 10
 
 $WLP_HOME/bin/dynamicRouting setup --port=$CONTROLLER_HTTPS_PORT --host=$HOSTNAME --user=admin --password=admin --keystorePassword=webAS --pluginInstallRoot=$PluginRoot --webServerNames=webserver1
 
