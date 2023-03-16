@@ -18,6 +18,8 @@
                   host="*"
 				  httpPort="9090"
                   httpsPort="9493" />
-                  
-</server>
 
+<!--KLP: Ensure http session data for the PBW, WhereAmI and the AdminCenter do not overwrite the JSESSIONID cookie to the same location -->                  
+   <httpSession useContextRootAsCookiePath="true" />                 
+                 
+</server>
