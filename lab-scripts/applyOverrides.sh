@@ -4,6 +4,8 @@
 numParms=$#
 numOverrides=$(($numParms-6))
 
+IHS_HOME=/opt/IBM/HTTPServer
+
 #echo "numOverrides $numOverrides"
 # assign the arguets entered into a string for processing
 str1=$@
@@ -258,6 +260,11 @@ for ((n=7; n<=$numParms; n++))
          echo "--------------------------"
          OVERRIDE_FILE=$SCRIPT_ARTIFACTS/httpSessionPersistence.xml
          process-overrides
+         sleep 7
+         #echo "restarting http server"
+         $IHS_HOME/bin/apachectl -k restart
+         
+         
      elif [[ $override_value == "MONITOR" ]]; then
          PROCESS_OVERRIDE="MONITOR"
          echo "--------------------------"
