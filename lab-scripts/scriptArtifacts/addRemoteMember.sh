@@ -1,4 +1,3 @@
-#!/bin/bash -i
 #####################
 # addRemoteMember.sh
 #####################
@@ -167,13 +166,13 @@ join_collective()
   echo " " | tee -a $LOG
 
   echo "---------------------------------------------------------------------------" 
-  echo "Reply 'y' when prompted to accept the certificate chain, (collective join)." 
+  echo "Reply 'y' if prompted to accept the certificate chain, (collective join)." 
   echo "---------------------------------------------------------------------------"   
 
   sleep 10
 
 
-  $WLP_HOME/bin/collective join $LIBERTY_SERVER --host=$CONTROLLER_HOST --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --createConfigFile=$WLP_HOME/usr/servers/$LIBERTY_SERVER/controller.xml
+  $WLP_HOME/bin/collective join $LIBERTY_SERVER --host=$CONTROLLER_HOST --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --autoAcceptCertificates --createConfigFile=$WLP_HOME/usr/servers/$LIBERTY_SERVER/controller.xml
 
 # echo "return code from collective join command: $? "
 
