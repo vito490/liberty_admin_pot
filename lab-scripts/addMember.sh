@@ -1,6 +1,12 @@
 ####################
 #  addMember.sh
 ####################
+
+numParms=$#
+
+SKIP_P=$9
+#echo "skip prompt: $SKIP_PROMPT"
+
 if [[ "$#" -lt 8 ]]; then
   echo "Missing command parameters, check usage"
   echo "---------------------------------------"
@@ -210,16 +216,23 @@ echo "#-------------------------------------------------------------" | tee -a $
 echo "" | tee -a $LOG
 
 
+
+#Look for the udocumneted parm 'SKIP_ACCEPT' to bypass the prompt to continue script. 
+#This is used for higher level scripts to run without user input
+
 #Have user reply "y" to continue the script, afer ensuring accuracy of the variables inout 
-read -p "Do you wish to continue with the parameters specified? (y/n)? " answer
-case ${answer:0:1} in
+if [[ $SKIP_P != "SKIP_PROMPT" ]]; then  
+
+  read -p "Do you wish to continue with the parameters specified? (y/n)? " answer
+  case ${answer:0:1} in
     y|Y )
         echo continuing...
     ;;
     * )
         exit 1
     ;;
-esac
+  esac
+fi
 
 
 verify_server_package_exists()
@@ -322,12 +335,12 @@ join_Local_Member()
   echo "" | tee -a $LOG
 
   echo "-------------------------------------------------------------------------"
-  echo "Reply 'y' when prompted to accept the certificate chain (collective join)"
+  echo "Reply 'y' if prompted to accept the certificate chain (collective join)"
   echo "-------------------------------------------------------------------------"
   
   sleep 10
   
-  $WLP_HOME/bin/collective join $SERVER_NAME --host=$CONTROLLER_HOSTNAME --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --createConfigFile=$WLP_HOME/usr/servers/$SERVER_NAME/controller.xml
+  $WLP_HOME/bin/collective join $SERVER_NAME --host=$CONTROLLER_HOSTNAME --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --autoAcceptCertificates --createConfigFile=$WLP_HOME/usr/servers/$SERVER_NAME/controller.xml
 
   if [[ $? != 0 ]]; then
     echo "#ERROR Failed to join $SERVER_NAME to the collective. See the error message that was returned!" | tee -a $LOG
@@ -506,7 +519,7 @@ echo  "$CONTROLLER_WLP_HOME/bin/collective registerHost $MEMBER_HOSTNAME --contr
 echo "" | tee -a $LOG
 
 echo "-----------------------------------------------------------------------------" 
-echo "Reply 'y' when prompted to accept the certificate chain (collective register)" 
+echo "Reply 'y' if prompted to accept the certificate chain (collective register)" 
 echo "-----------------------------------------------------------------------------" 
 
 echo "" | tee -a $LOG
@@ -514,7 +527,7 @@ echo "" | tee -a $LOG
 sleep 10
 
 
-$CONTROLLER_WLP_HOME/bin/collective registerHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT --hostJavaHome=/opt/IBM/ibm-java-x86_64-80/jre/ --rpcuser=techzone --rpcUserPassword='IBMDem0s!'
+$CONTROLLER_WLP_HOME/bin/collective registerHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT --hostJavaHome=/opt/IBM/ibm-java-x86_64-80/jre/ --autoAcceptCertificates --rpcuser=techzone --rpcUserPassword='IBMDem0s!'
 
 rc=$?
 echo "return code from register host command: $rc" 
