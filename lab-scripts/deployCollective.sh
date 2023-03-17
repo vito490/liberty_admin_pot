@@ -6,6 +6,24 @@ numParms=$#
 PARM1=$1
 #echo "PARM1: $PARM1"
 
+if [[ -d "/home/techzone/lab-work/liberty-controller" ]]; then
+   echo ""
+   echo "-----------------------------------------------------------------------"
+   echo "The Collective Controller already exists."
+   echo ""
+   echo "This script cannot continue because the collective may already exist..."
+   echo ""
+   echo "Exiting!"
+   echo "-----------------------------------------------------------------------"
+   echo ""
+   exit 1
+fi   
+ 
+
+
+
+
+
 SKIP_1030="false"
 
 if [[ ! -z "$PARM1" ]]; then
