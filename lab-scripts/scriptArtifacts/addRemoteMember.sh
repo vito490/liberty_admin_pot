@@ -166,7 +166,7 @@ join_collective()
   echo " " | tee -a $LOG
 
   echo "---------------------------------------------------------------------------" 
-  echo "Reply 'y' if prompted to accept the certificate chain, (collective join)." 
+  echo "AutoAcceptCertificates enabled for: (collective join)." 
   echo "---------------------------------------------------------------------------"   
 
   sleep 10

@@ -215,24 +215,24 @@ echo "# Full path to the Librty server package: $FULL_PATH_PACKAGED_SERVER_PATH"
 echo "#-------------------------------------------------------------" | tee -a $LOG
 echo "" | tee -a $LOG
 
-
+sleep 5
 
 #Look for the udocumneted parm 'SKIP_ACCEPT' to bypass the prompt to continue script. 
 #This is used for higher level scripts to run without user input
 
 #Have user reply "y" to continue the script, afer ensuring accuracy of the variables inout 
-if [[ $SKIP_P != "SKIP_PROMPT" ]]; then  
-
-  read -p "Do you wish to continue with the parameters specified? (y/n)? " answer
-  case ${answer:0:1} in
-    y|Y )
-        echo continuing...
-    ;;
-    * )
-        exit 1
-    ;;
-  esac
-fi
+#if [[ $SKIP_P != "SKIP_PROMPT" ]]; then  
+#
+# read -p "Do you wish to continue with the parameters specified? (y/n)? " answer
+#  case ${answer:0:1} in
+#    y|Y )
+#        echo continuing...
+#    ;;
+#    * )
+#        exit 1
+#    ;;
+#  esac
+#fi
 
 
 verify_server_package_exists()
@@ -334,9 +334,9 @@ join_Local_Member()
   echo "$WLP_HOME/bin/collective join $SERVER_NAME --host=$CONTROLLER_HOSTNAME --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --createConfigFile=$WLP_HOME/usr/servers/$SERVER_NAME/controller.xml"  | tee -a $LOG
   echo "" | tee -a $LOG
 
-  echo "-------------------------------------------------------------------------"
-  echo "Reply 'y' if prompted to accept the certificate chain (collective join)"
-  echo "-------------------------------------------------------------------------"
+  echo "-----------------------------------------------------"
+  echo "AutoAcceptCertificates enabled for: (collective join)"
+  echo "-----------------------------------------------------"
   
   sleep 10
   
@@ -518,9 +518,9 @@ echo "" | tee -a $LOG
 echo  "$CONTROLLER_WLP_HOME/bin/collective registerHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT --hostJavaHome=/opt/IBM/ibm-java-x86_64-80/jre/ --rpcuser=techzone --rpcUserPassword='IBMDem0s!'" |  tee -a $LOG
 echo "" | tee -a $LOG
 
-echo "-----------------------------------------------------------------------------" 
-echo "Reply 'y' if prompted to accept the certificate chain (collective register)" 
-echo "-----------------------------------------------------------------------------" 
+echo "---------------------------------------------------------" 
+echo "AutoAcceptCertificates enabled for: (collective register)" 
+echo "---------------------------------------------------------" 
 
 echo "" | tee -a $LOG
 
