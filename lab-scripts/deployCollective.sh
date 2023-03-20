@@ -14,6 +14,9 @@ if [[ -d "/home/techzone/lab-work/liberty-controller" ]]; then
    echo "This script cannot continue because the collective may already exist..."
    echo ""
    echo "Exiting!"
+   echo "" 
+   echo "--> Admin Center URL: https://server0.gym.lan:9491/adminCenter"
+   echo ""
    echo "-----------------------------------------------------------------------"
    echo ""
    exit 1
@@ -99,4 +102,3 @@ echo "========================================"
 echo "Liberty Collective Deployment Complete! "
 echo "========================================"
 echo ""
-

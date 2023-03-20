@@ -86,13 +86,13 @@ fi
 
 
 if [ ! -d "$LOGS" ]; then
-     mkdir $LOGS ;
      echo "Create Logs Directory: $LOGS"
+     mkdir $LOGS ;
 fi
 
-if [ -d "$LOGS" ]; then
-     rm $LOG ;
+if [ -f "$LOG" ]; then
      echo "remove old log file: $LOG"
+     rm $LOG ;
 fi 
 
 

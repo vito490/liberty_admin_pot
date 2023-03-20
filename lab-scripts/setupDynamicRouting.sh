@@ -57,7 +57,7 @@ echo "Reply 'y' if prompted to accept the certificate chain (secure connection t
 echo "-----------------------------------------------------------------------------------------" 
 echo "" 
 
-sleep 10
+sleep 5
 
 $WLP_HOME/bin/dynamicRouting setup --port=$CONTROLLER_HTTPS_PORT --host=$HOSTNAME --user=admin --password=admin --keystorePassword=webAS --pluginInstallRoot=$PluginRoot --webServerNames=webserver1 --autoAcceptCertificates
 
