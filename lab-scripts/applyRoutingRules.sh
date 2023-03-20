@@ -21,6 +21,7 @@ if [[ "$#" -lt 2 ]]; then
   exit 1
 fi
 
+IHS_HOME=/opt/IBM/HTTPServer
 
 #iterate over the keys that are passed in, until all are processed
 numKeys=0
@@ -105,7 +106,7 @@ echo "#----------------------------------"
 echo "# Now running applyRoutingRules.sh" 
 echo "#----------------------------------" 
 
-sleep 5
+sleep 3
 
 process-overrides()
 {
@@ -127,8 +128,10 @@ process-overrides()
 #  echo ""
 #  echo "Routing Rule is now set to send requests to '$APP_SERVER' Liberty server(s)" 
 #  echo ""
-#  sleep 3
- 
+   sleep 3
+   #echo "restarting http server"
+   $IHS_HOME/bin/apachectl -k restart
+   sleep 3
     echo ""
     echo "============================================================="
     echo ""
@@ -158,4 +161,3 @@ process-overrides()
 
 process-overrides
         
-
