@@ -6,25 +6,22 @@ numParms=$#
 PARM1=$1
 #echo "PARM1: $PARM1"
 
-if [[ -d "/home/techzone/lab-work/liberty-controller" ]]; then
-   echo ""
-   echo "-----------------------------------------------------------------------"
-   echo "The Collective Controller already exists."
-   echo ""
-   echo "This script cannot continue because the collective may already exist..."
-   echo ""
-   echo "Exiting!"
-   echo "" 
-   echo "--> Admin Center URL: https://server0.gym.lan:9491/adminCenter"
-   echo ""
-   echo "-----------------------------------------------------------------------"
-   echo ""
-   exit 1
-fi   
+#if [[ -d "/home/techzone/lab-work/liberty-controller" ]]; then
+#   echo ""
+#   echo "-----------------------------------------------------------------------"
+#   echo "The Collective Controller already exists."
+#   echo ""
+#   echo "This script cannot continue because the collective may already exist..."
+#   echo ""
+#   echo "Exiting!"
+#   echo "" 
+#   echo "--> Admin Center URL: https://server0.gym.lan:9491/adminCenter"
+#   echo ""
+#   echo "-----------------------------------------------------------------------"
+#   echo ""
+#   exit 1
+#fi   
  
-
-
-
 
 
 SKIP_1030="false"
@@ -32,7 +29,7 @@ SKIP_1030="false"
 if [[ ! -z "$PARM1" ]]; then
  # echo "parameter specified, need to see if it matches --skip1030"
 
-  if [[ "$PARM1" = "--skip1030" ]]; then 
+  if [[ "$PARM1" = "--lab1030" ]]; then 
      SKIP_1030="true"
      echo ""
      echo "================================================="
@@ -40,6 +37,17 @@ if [[ ! -z "$PARM1" ]]; then
      echo "================================================="
      echo ""
      sleep 3 
+  else 
+     echo ""
+     echo "===================================================="
+     echo "---> You entered an invalid command line paraameter."
+     echo "" 
+     echo "---> Invalid parameter: $PARM1"
+     echo ""
+     echo "Eexiting!"
+     echo "===================================================="
+     echo ""
+     exit 1 
   fi  
 fi
 
@@ -54,6 +62,21 @@ echo ""
 sleep 3
 
 /home/techzone/liberty_admin_pot/lab-scripts/createController.sh
+rc=$? 
+
+echo "Retern code from createController script: $rc"
+
+if [[ "$rc" = "12" ]]; then
+  echo ""
+  echo "------------------------------------------------------------------------------"
+  echo "--> The Collective Controller already exists. Exiting deployCollective script!"
+  echo ""
+  echo "--> You can access the Liberty Admin Center using the URL displayed above."
+  echo "------------------------------------------------------------------------------"
+  echo ""
+  exit 1
+fi   
+  
 
 if [[ $SKIP_1030 != "true" ]]; then  
   echo ""
