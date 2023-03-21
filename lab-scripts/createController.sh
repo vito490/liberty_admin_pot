@@ -159,7 +159,7 @@ controller_exists=""
     echo "# End of createController.sh script."
     echo ""
 
-    exit 1
+    exit 12
   fi
 
 
