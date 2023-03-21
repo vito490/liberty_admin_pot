@@ -128,7 +128,7 @@ process-overrides()
 #  echo ""
 #  echo "Routing Rule is now set to send requests to '$APP_SERVER' Liberty server(s)" 
 #  echo ""
-   sleep 3
+   sleep 1
    #echo "restarting http server"
    $IHS_HOME/bin/apachectl -k restart
    sleep 3
