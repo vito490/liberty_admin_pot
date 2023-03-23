@@ -102,7 +102,7 @@ sleep 3
 
 echo ""
 echo "========================================"
-echo "Deploy apServer1"
+echo "Deploy appServer1"
 echo "========================================"
 echo ""
 sleep 3
@@ -118,6 +118,17 @@ echo ""
 sleep 3
 
 /home/techzone/liberty_admin_pot/lab-scripts/addMember.sh -n appServer2 -v 22.0.0.8 -p 9082:9442 -h server1.gym.lan SKIP_PROMPT
+
+
+
+echo ""
+echo "========================================"
+echo "Start the application database"
+echo "========================================"
+echo ""
+sleep 3
+docker start db2_demo_data
+
 
 
 echo ""

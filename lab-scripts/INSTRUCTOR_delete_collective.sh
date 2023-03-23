@@ -2,7 +2,7 @@
 #  INSTRUCTOR_delete_collective.sh
 ##################################
 
-# --force flag is always required, just in case script is unintentioanlly run.
+# --force flag is always required, just in case script is unintentionally run.
 #Reply to continue script is also required
 
 
@@ -21,6 +21,7 @@ LAB_FILES=$LAB_HOME/liberty_admin_pot
 SCRIPT_ARTIFACTS=$LAB_FILES/lab-scripts/scriptArtifacts
 SERVER0_STAGING_DIR=$LAB_HOME/lab-work/liberty-staging
 SERVER1_STAGING_DIR=/opt/IBM/liberty-staging
+IHS_HOME=/opt/IBM/HTTPServer
 
 
 HOST0="server0.gym.lan"
@@ -97,7 +98,9 @@ sleep 2
 
 /$SCRIPT_ARTIFACTS/INSTRUCTOR_delete_collective_resources.sh
 
-  
+echo "Stopping HTTP Server"
+$IHS_HOME/bin/apachectl -k stop
 
+  
 
 
