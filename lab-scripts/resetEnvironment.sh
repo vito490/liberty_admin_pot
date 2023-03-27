@@ -7,7 +7,9 @@
   echo "---> Resetting environment for lab 1020"
   echo ""
   echo "--->  This should take less than 1 minute"
-  ./INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
+
   echo ""
   echo "--> Environment prepared for lab 1020"
   echo ""
@@ -20,10 +22,11 @@
 1030() {
   echo "---> Resetting environment for lab 1030"
   echo ""
-  echo "--->  This will take about 10 minutes" 
+  echo "--->  This will take about 7 to 10 minutes" 
   sleep 5 
-   ./INSTRUCTOR_delete_collective.sh --force
-  ./deployCollective.sh --lab1030
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
+  /home/techzone/liberty_admin_pot/lab-scripts/deployCollective.sh --lab1030
   echo ""
   echo "--> Environment prepared for lab 1030"
   echo ""
@@ -37,10 +40,11 @@
 1040() {
   echo "---> Resetting environment for lab 1040"
   echo ""
-  echo "--->  This will take about 10 minutes" 
+  echo "--->  This will take about 7 to 10 minutes" 
   sleep 5 
-  ./INSTRUCTOR_delete_collective.sh --force
-  ./deployCollective.sh
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
+  /home/techzone/liberty_admin_pot/lab-scripts/deployCollective.sh
   echo ""
   echo "--> Environment prepared for lab 1040"
   echo ""
@@ -53,10 +57,11 @@
 1050() {
   echo "Resetting environment for lab 1050"
   echo ""
-  echo "--->  This will take about 10 minutes" 
+  echo "--->  This will take about 7 to 10 minutes" 
   sleep 5 
-  ./INSTRUCTOR_delete_collective.sh --force
-  ./deployCollective.sh
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
+  /home/techzone/liberty_admin_pot/lab-scripts/deployCollective.sh
   echo ""
   echo "--> Environment prepared for lab 1050"
   echo ""
@@ -69,10 +74,11 @@
 1060() {
   echo "Resetting environment for lab 1060"
   echo ""
-  echo "--->  This will take about 10 minutes" 
+  echo "--->  This will take about 7 to 10 minutes" 
   sleep 5 
-  ./INSTRUCTOR_delete_collective.sh --force
-  ./deployCollective.sh
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
+  /home/techzone/liberty_admin_pot/lab-scripts/deployCollective.sh
   echo ""
   echo "--> Environment prepared for lab 1060"
   echo ""
@@ -85,10 +91,11 @@
 1070() {
   echo "Resetting environment for lab 1070"
   echo ""
-  echo "--->  This will take about 10 minutes"
+  echo "--->  This will take about 7 to 10 minutes"
   sleep 5 
-  ./INSTRUCTOR_delete_collective.sh --force
-  ./deployCollective.sh
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
+  /home/techzone/liberty_admin_pot/lab-scripts/deployCollective.sh
   echo ""
   echo "--> Environment prepared for lab 1070"
   echo ""
@@ -102,7 +109,8 @@ delete-collective() {
   echo "Delete the Liberty Collective"
   echo "--->  This should take less than 1 minute"
   sleep 5 
-  ./INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
+  /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
   echo ""
   echo "---------------------------------------"
   echo "The Liberty Collective has been deleted"
@@ -168,6 +176,5 @@ esac
 
 
    
-
 
 
