@@ -112,7 +112,7 @@ echo "# Logs directory: $LOGS" | tee -a $LOG
 echo "# Log file name: $LOG" | tee -a $LOG
 echo "#-------------------------------------------------------------" | tee -a  $LOG
 
-sleep 7
+sleep 1
 
 
 clone-repo()
@@ -123,14 +123,14 @@ clone-repo()
    echo "Clone Git Repo Step" | tee -a  $LOG
    echo "===========================" | tee -a  $LOG
    echo "" | tee -a  $LOG
-   sleep 5
+   sleep 3
 
 
   echo "" | tee -a $LOG
   echo "# Change to Directory: $HOME_DIR. " | tee -a $LOG
   echo "cd  $HOME_DIR" | tee -a $LOG
   echo "" | tee -a $LOG  
-  sleep 5
+  sleep 1
 
 
   cd  $HOME_DIR
@@ -151,7 +151,7 @@ clone-repo()
   echo "# Cloning the git repo: $SRC_MAVEN_GIT_REPO. " | tee -a $LOG
   echo "git clone $SRC_MAVEN_GIT_REPO" | tee -a $LOG
   echo "" | tee -a $LOG  
-  sleep 5
+  sleep 1
 
 
   git clone $SRC_MAVEN_GIT_REPO
@@ -185,7 +185,7 @@ maven-build()
    echo "Maven Build Step" | tee -a  $LOG
    echo "===========================" | tee -a  $LOG
    echo "" | tee -a  $LOG
-   sleep 5
+   sleep 3
   
    echo ""
    echo "Maven to build applications and produce a Liberty Server Package as output." 
@@ -195,7 +195,7 @@ maven-build()
   echo "# Change to the Maven working directory of the cloned repo. " | tee -a $LOG
   echo "cd $SRC_MAVEN_LAB_FILES" | tee -a $LOG
   echo "" | tee -a $LOG  
-  sleep 5
+  sleep 1
   
   cd $SRC_MAVEN_LAB_FILES
   
@@ -204,7 +204,7 @@ maven-build()
   echo "# Run the Maven build process" | tee -a $LOG
   echo "mvn -Dliberty.runtime.version=$LIBERTY_VERSION -DskipTests=true clean install" | tee -a $LOG
   echo "" | tee -a $LOG  
-  sleep 5
+  sleep 2
 
   mvn -Dliberty.runtime.version=$LIBERTY_VERSION -DskipTests=true clean install
   rc2=$?
@@ -239,7 +239,7 @@ post-build-steps()
    echo "Post Build Step" | tee -a  $LOG
    echo "===========================" | tee -a  $LOG
    echo "" | tee -a  $LOG
-   sleep 5
+   sleep 3
   
 echo "Post Build Steps" 
 

@@ -145,7 +145,7 @@ echo "#----------------------------------" | tee $LOG
 echo "# Now running addMember.sh" | tee -a $LOG
 echo "#----------------------------------" | tee -a $LOG
 
-sleep 5
+sleep 3
 
 
 #create the LOGS directory if it does not exist
@@ -174,7 +174,7 @@ do
     $CONTROLLER_WLP_HOME/bin/server start $CONTROLLER_NAME 
     rc=$?
     echo "server start return code" $rc
-    sleep 7
+    sleep 2
   fi 
 done
 
@@ -215,7 +215,7 @@ echo "# Full path to the Librty server package: $FULL_PATH_PACKAGED_SERVER_PATH"
 echo "#-------------------------------------------------------------" | tee -a $LOG
 echo "" | tee -a $LOG
 
-sleep 5
+#sleep 5
 
 #Look for the udocumneted parm 'SKIP_ACCEPT' to bypass the prompt to continue script. 
 #This is used for higher level scripts to run without user input
@@ -283,7 +283,7 @@ join_Local_Member()
     unzip -o $FULL_PATH_PACKAGED_SERVER_PATH.zip -d $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME
  
    echo "The Server package was extracted to: $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME"
-   sleep 3
+   sleep 1
   else 
     echo "A server package already exists of name: $LIBERTY_VERSION-$SERVER_NAME, and therefore cannot be extracted to directory: $LIBERTY_ROOT/$LIBERTY_VERSION-$SERVER_NAME". 
     echo "A collective member of that server name may already exist in the collective. 
@@ -304,7 +304,7 @@ join_Local_Member()
   echo "Rename the default packaged server name $PACKAGED_PBW_SERVER_NAME to $SERVER_NAME"
   mv   $WLP_HOME/usr/servers/$PACKAGED_PBW_SERVER_NAME $WLP_HOME/usr/servers/$SERVER_NAME
   echo "The Server name is: $SERVER_NAME"
-  sleep 5
+  sleep 1
 
  
 #Update the Liberty server ports in the memberOverrides.xml with ports passed into script
@@ -320,10 +320,11 @@ join_Local_Member()
   sed -i 's/9446/'$HTTPS_PORT'/g' $WLP_HOME/usr/servers/$SERVER_NAME/configDropins/overrides/memberOverride.xml 
   echo "HTTP port is now set to $HTTP_PORT in configOverrides" 
   echo "HTTPS port is now set to $HTTPS_PORT in configOverrides" 
+  echo ""
   sleep 3
 
   echo "joining local member to collective...." 
-  sleep 3
+#  sleep 3
    
   #join a local server to the collective
   
@@ -338,7 +339,7 @@ join_Local_Member()
   echo "AutoAcceptCertificates enabled for: (collective join)"
   echo "-----------------------------------------------------"
   
-  sleep 10
+  sleep 2
   
   $WLP_HOME/bin/collective join $SERVER_NAME --host=$CONTROLLER_HOSTNAME --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --autoAcceptCertificates --createConfigFile=$WLP_HOME/usr/servers/$SERVER_NAME/controller.xml
 
@@ -351,7 +352,7 @@ join_Local_Member()
 
   echo "# Collective member $SERVER_NAME joined the collective, and is viewable from the Liberty Admin Center" | tee -a $LOG 
 
-  sleep 5
+  sleep 2
 }
 
 
@@ -439,7 +440,7 @@ echo "" | tee -a $LOG
   if [[ "$controllerHttpsPortFound" -lt 1 ]]; then
     echo "Need to open port $CONTROLLER_HTTPS_PORT for the colective controller HTTPS port"
     sudo firewall-cmd --permanent --zone=public --add-port=$CONTROLLER_HTTPS_PORT/tcp 
-    sleep 7
+    sleep 1
   fi  
 
     
@@ -449,7 +450,7 @@ echo "" | tee -a $LOG
   
   echo "WAITING for Firewall rules to be reloaded............ " 
 
-  sleep 7
+  sleep 2
   
 
 #List the ports 
@@ -480,7 +481,7 @@ echo "" | tee -a $LOG
     echo "Required port $CONTROLLER_HTTPS_PORT for the Liberty Controller HTTPS port is opened" 
     echo "Script will continue!" 
     echo "----------------------------------------------------------------------------" 
-    sleep 7
+    sleep 1
   else 
     echo "Required port $CONTROLLER_HTTPS_PORT for the Liberty Controller HTTPS not opend." 
     echo "Exiting!" 
@@ -524,7 +525,7 @@ echo "---------------------------------------------------------"
 
 echo "" | tee -a $LOG
 
-sleep 10
+sleep 2
 
 
 $CONTROLLER_WLP_HOME/bin/collective registerHost $MEMBER_HOSTNAME --controller=admin:admin@$CONTROLLER_HOSTNAME:$CONTROLLER_HTTPS_PORT --hostJavaHome=/opt/IBM/ibm-java-x86_64-80/jre/ --autoAcceptCertificates --rpcuser=techzone --rpcUserPassword='IBMDem0s!'
@@ -565,7 +566,7 @@ fi
 echo "Test connection between Controller and host $MEMBER_HOSTNAME completed succesfully." 
 echo ""
 
-sleep 7
+sleep 2
     
 #echo "---------------------------------------------------------------------------"
 #echo "You will be prompted multiple times for the password for the techzone user"
@@ -584,7 +585,7 @@ echo " " | tee -a $LOG
 echo "---------------------------------------------------------------------------"
 echo "--->  Send the Liberty Server Package to the remote server"
 echo "---------------------------------------------------------------------------"
-sleep 5
+sleep 3
 
 sshpass -p "IBMDem0s!" scp $FULL_PATH_PACKAGED_SERVER_PATH.zip  techzone@$MEMBER_HOSTNAME:/home/techzone/Downloads
 
@@ -598,7 +599,7 @@ echo " "  | tee -a $LOG
 echo "---------------------------------------------------------------------------"
 echo "--->  Send the shell script to the remote server"
 echo "---------------------------------------------------------------------------"
-sleep 5
+sleep 3
 
 
 sshpass -p "IBMDem0s!" scp $SCRIPT_ARTIFACTS/addRemoteMember.sh techzone@$MEMBER_HOSTNAME:/home/techzone
@@ -615,7 +616,7 @@ echo " " | tee -a $LOG
 echo "---------------------------------------------------------------------------"
 echo "--->  SSH into the remote server and run the script to deploy Liberty"
 echo "---------------------------------------------------------------------------"
-sleep 5
+sleep 3
 
 sshpass -p "IBMDem0s!" ssh -t $MEMBER_HOSTNAME . /home/techzone/addRemoteMember.sh $SERVER_NAME $LIBERTY_VERSION $HTTP_PORT $HTTPS_PORT $CONTROLLER_HTTPS_PORT
 
@@ -639,7 +640,7 @@ echo " " | tee -a $LOG
 echo "---------------------------------------------------------------------------"
 echo "--->  Retreive the addRemoteMember.log from the remote server"
 echo "---------------------------------------------------------------------------"
-sleep 5
+sleep 2
 
 sshpass -p "IBMDem0s!" scp techzone@$MEMBER_HOSTNAME:/home/techzone/2_addRemoteMember.log $REMOTE_LOG
 

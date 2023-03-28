@@ -1,3 +1,6 @@
+##########################
+# setupDynamicRouting.sh
+##########################
 
 LAB_HOME=/home/techzone
 LAB_FILES=/home/techzone/liberty_admin_pot
@@ -52,35 +55,35 @@ if [ -e "/tmp/plugin-key.crl" ]; then
 fi
 
 echo ""
-echo "-----------------------------------------------------------------------------------------" 
-echo "Reply 'y' if prompted to accept the certificate chain (secure connection to Controller)" 
-echo "-----------------------------------------------------------------------------------------" 
+echo "----------------------------------------------------------------------------------------------" 
+echo "AutoAcceptCertificates enabled for connection to controller  (secure connection to Controller)" 
+echo "----------------------------------------------------------------------------------------------" 
 echo "" 
 
-sleep 5
+sleep 2
 
 $WLP_HOME/bin/dynamicRouting setup --port=$CONTROLLER_HTTPS_PORT --host=$HOSTNAME --user=admin --password=admin --keystorePassword=webAS --pluginInstallRoot=$PluginRoot --webServerNames=webserver1 --autoAcceptCertificates
 
-sleep 5
+sleep 2
 echo "dynamicRouting setup completed"
 
 cp plugin-cfg.xml /tmp/.
 cp plugin-key.p12 /tmp/.
-sleep 5
+sleep 2
 
 $IHS_HOME/bin/gskcapicmd -keydb -convert -pw webAS -db /tmp/plugin-key.p12 -old_format pkcs12 -target /tmp/plugin-key.kdb -new_format cms -stash 
-sleep 5
+sleep 2
 echo "gskcmd convert completed"
 $IHS_HOME/bin/gskcapicmd -cert -setdefault -pw webAS -db /tmp/plugin-key.kdb -label default
-sleep 5
+sleep 2
 echo "gskcmd cert completed"
 cp /tmp/plugin-key.kdb  /opt/IBM/WebSphere/Plugins/config/webserver1/.
 cp /tmp/plugin-key.rdb  /opt/IBM/WebSphere/Plugins/config/webserver1/.
 cp /tmp/plugin-key.sth /opt/IBM/WebSphere/Plugins/config/webserver1/.
 cp /tmp/plugin-cfg.xml /opt/IBM/WebSphere/Plugins/config/webserver1/.
-sleep 5
+sleep 2
 #Start HIS server
 
 $IHS_HOME/bin/apachectl start
 
-sleep 5
+sleep 2

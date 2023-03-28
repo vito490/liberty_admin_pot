@@ -109,7 +109,7 @@ echo "# Controller HTTPS Port: $HTTPS_PORT" | tee -a $LOG
 echo "#--------------------------------------------------------------" | tee -a $LOG
 echo "" | tee -a $LOG
 
-sleep 7
+sleep 2
 
 
 check_for_controller()
@@ -141,7 +141,7 @@ controller_exists=""
     if [[ "$rc" = "1" ]]; then
       echo "Start $CONTROLLER_NAME" 
       $WLP_HOME/bin/server start $CONTROLLER_NAME ;
-      sleep 5
+      sleep 3
     fi
     
      echo "   Exiting!"
@@ -187,7 +187,7 @@ if [ ! -d "$LIBERTY_ROOT_DIR" ]; then
 fi
 
 echo "WLP_HOME: $WLP_HOME"
-sleep 7
+sleep 2
 
 
 #Install Liberty for the collective controller using the archive method, if Liberty is not already installed.
@@ -221,7 +221,7 @@ echo "" | tee -a $LOG
 if [ -d "$WLP_HOME/usr/servers/$CONTROLLER_NAME" ]; then
   $WLP_HOME/bin/server stop $CONTROLLER_NAME ;
   echo "$CONTROLLER_NAME stopped" 
-  sleep 5
+  sleep 3
 
 #Cleanup the Liberty Server directory  
   echo "" | tee -a $LOG
@@ -235,7 +235,7 @@ if [ -d "$WLP_HOME/usr/servers/$CONTROLLER_NAME" ]; then
   echo "controller $CONTROLLER_NAME removed" 
   echo "" | tee -a $LOG
   echo "$CONTROLLER_NAME directory structure removed" 
-  sleep 5
+  sleep 3
 fi
 
 #Create the collective controller server
@@ -329,7 +329,7 @@ echo "" | tee -a $LOG
 
 $WLP_HOME/bin/server start $CONTROLLER_NAME
 
-sleep 5
+#sleep 3
 
 if [[ $? != 0 ]]; then
    echo "The Liberty Controller server $CONTROLLER_NAME failed to start: See the error message that was returned!"

@@ -22,7 +22,7 @@
 1030() {
   echo "---> Resetting environment for lab 1030"
   echo ""
-  echo "--->  This will take about 7 to 10 minutes" 
+  echo "--->  This will take about 5 to 7 minutes" 
   sleep 5 
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
@@ -40,7 +40,7 @@
 1040() {
   echo "---> Resetting environment for lab 1040"
   echo ""
-  echo "--->  This will take about 7 to 10 minutes" 
+  echo "--->  This will take about 5 to 7 minutes" 
   sleep 5 
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
@@ -57,7 +57,7 @@
 1050() {
   echo "Resetting environment for lab 1050"
   echo ""
-  echo "--->  This will take about 7 to 10 minutes" 
+  echo "--->  This will take about 5 to 7 minutes" 
   sleep 5 
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
@@ -74,7 +74,7 @@
 1060() {
   echo "Resetting environment for lab 1060"
   echo ""
-  echo "--->  This will take about 7 to 10 minutes" 
+  echo "--->  This will take about 5 to 7 minutes" 
   sleep 5 
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
@@ -91,7 +91,7 @@
 1070() {
   echo "Resetting environment for lab 1070"
   echo ""
-  echo "--->  This will take about 7 to 10 minutes"
+  echo "--->  This will take about 5 to 7 minutes" 
   sleep 5 
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_collective.sh --force
   /home/techzone/liberty_admin_pot/lab-scripts/scriptArtifacts/INSTRUCTOR_delete_instana_agent.sh 
@@ -176,5 +176,4 @@ esac
 
 
    
-
 

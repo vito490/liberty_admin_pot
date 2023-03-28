@@ -27,7 +27,7 @@ echo "#--------------------------------------------------" | tee $LOG
 echo "# Now running addRemoteMember.sh on $HOSTNAME" | tee -a $LOG
 echo "#--------------------------------------------------" | tee -a $LOG
 
-sleep 10
+sleep 3
 #Assign varibales from input parms
 LIBERTY_SERVER=$1
 LIBERTY_VERSION=$2
@@ -98,7 +98,7 @@ unzip_liberty_archive()
     echo "" 
     echo "Liberty server unpackaged in $WLP_ROOT_DIR/$LIBERTY_VERSION-$LIBERTY_SERVER" 
     echo ""  
-    sleep 3
+    sleep 2
   else 
     echo "A server already exists of name: $LIBERTY_VERSION-$LIBERTY_SERVER, and therefore cannot be extracted to directory: $LIBERTY_ROOT/$LIBERTY_VERSION-$LIBERTY_SERVER". 
     echo ""
@@ -110,7 +110,7 @@ unzip_liberty_archive()
 
   
   cd /home/techzone
-  sleep 5
+  sleep 1
 }
 
 apply_server_updates()
@@ -147,7 +147,7 @@ apply_server_updates()
   echo "HTTP port is now set to $LIBERTY_HTTP_PORT in configOverrides" 
   echo "HTTPS port is now set to $LIBERTY_HTTPS_PORT in configOverrides" 
   
-  sleep 5
+  sleep 3
 
 }
 
@@ -169,7 +169,7 @@ join_collective()
   echo "AutoAcceptCertificates enabled for: (collective join)." 
   echo "---------------------------------------------------------------------------"   
 
-  sleep 10
+  sleep 2
 
 
   $WLP_HOME/bin/collective join $LIBERTY_SERVER --host=$CONTROLLER_HOST --port=$CONTROLLER_HTTPS_PORT --user=admin --password=admin --keystorePassword=memberKSPassword --autoAcceptCertificates --createConfigFile=$WLP_HOME/usr/servers/$LIBERTY_SERVER/controller.xml
@@ -201,7 +201,7 @@ echo "" | tee -a $LOG
   if [[ "$appHttpPortFound" -lt 1 ]]; then
     echo "Need to open port $LIBERTY_HTTPS_PORT, the application HTTPS port"
     sudo firewall-cmd --permanent --zone=public --add-port=$LIBERTY_HTTPS_PORT/tcp 
-    sleep 7
+    sleep 2
   fi  
     
 #reload the firewall settings
@@ -210,7 +210,7 @@ echo "" | tee -a $LOG
   
   echo "WAITING for Firewall rules to reload............ " 
   echo "" | tee -a $LOG
-  sleep 7
+  sleep 2
   
 
 #List the ports 
@@ -241,7 +241,7 @@ echo "" | tee -a $LOG
     echo "Required port $LIBERTY_HTTPS_PORT for the Liberty Appliction Server HTTPS port is opened" 
     echo "Script will continue!" 
     echo "----------------------------------------------------------------------------" 
-    sleep 7
+    sleep 1
   else 
     echo "Required port $LIBERTY_HTTPS_PORT for the Liberty Appliction Server HTTPS port NOT opened"
     echo "Exiting!" 
