@@ -1,0 +1,30 @@
+
+#Make sure the pot repo is cloned. 
+
+git clone https://github.com/IBMTechSales/liberty_admin_pot.git
+
+cd /home/techzone/liberty_admin_pot/TA-demo
+
+
+### TA CommonCode demo ###
+
+#load the TA multi project archive into TA. 
+curl -v -k -X POST "http://localhost:2220/lands_advisor/advisor/v2/collectionArchives/bulkImport" -H "accept: */*" -H "archiveName: bulk_data_3.zip" -H "Content-Type: application/octet-stream" --data-binary "@/home/techzone/liberty_admin_pot/TA-demo-artifacts/bulk_data_3.zip"
+
+
+### Then run the command that is provided from the command to see status.
+### Rerun the command until all 21 or so steps are complete, and the message indicates the project was uploaded. 
+### Then go into TA UI. The workaspce has been created.
+
+### You can use the TA common code lab as a guide for demo. 
+
+https://github.com/IBMTechSales/klp-workshop-labs/tree/master/1153_B-TransformationAdvisor-CommonCodeDiscovery
+
+
+
+### TA Demo, which has "ModResorts" and "CustomerOrderService" apps (Can do zero to hero with Modresorts incuding migration bundle)
+
+### Use TA Archive "klp-AppSrv01-cos.zip" in the cloned repo. 
+
+
+
