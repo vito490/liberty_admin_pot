@@ -2,10 +2,7 @@
     <featureManager>
         <feature>dynamicRouting-1.0</feature>
     </featureManager>
-	
-	<!-- Uncomment for multi-collecive demo (Kevin P)
-	    <dynamicRouting connectorClusterName="CollectiveController"/>
-	-->	
-	
-	
+    
+    <dynamicRouting connectorClusterName="CollectiveController-c2"/>
+    
 </server>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!--HTTP server plugin config file for webserver1 generated on 2023.04.29 at 07:53:12 EDT--><!--Merged HTTP server plugin config file--><Config ASDisableNagle="false" AcceptAllContent="false" AppServerPortPreference="HostHeader" ChunkedResponse="false" ConfigHash="-215785380" FIPSEnable="false" IISDisableNagle="false" IISPluginPriority="High" IgnoreDNSFailures="false" RefreshInterval="60" ResponseChunkSize="64" SSLConsolidate="false" TrustedProxyEnable="false" VHostMatchingCompat="false">
+   <Log LogLevel="Error" Name="/opt/IBM/WebSphere/Plugins/logs/webserver1/http_plugin.log"/>
+   <Property Name="ESIEnable" Value="true"/>
+   <Property Name="ESIMaxCacheSize" Value="1024"/>
+   <Property Name="ESIInvalidationMonitor" Value="false"/>
+   <Property Name="ESIEnableToPassCookies" Value="false"/>
+   <Property Name="PluginInstallRoot" Value="/opt/IBM/WebSphere/Plugins/"/>
+<!-- Configuration generated using httpEndpointRef=defaultHttpEndpoint-->
+<!-- The default_host contained only aliases for endpoint defaultHttpEndpoint.
+	 The generated VirtualHostGroup will contain only configured web server ports:
+		webserverPort=80
+		webserverSecurePort=443 -->
+   
+   
+   
+   
+<Property Name="Keyfile" Value="/opt/IBM/WebSphere/Plugins/config/webserver1/plugin-key-CollectiveController.kdb"/>
+<Property Name="Stashfile" Value="/opt/IBM/WebSphere/Plugins/config/webserver1/plugin-key-CollectiveController.sth"/>
+<IntelligentManagement>
+<Property name="webserverName" value="webserver1"/>
+<ConnectorCluster enabled="true" maxRetries="-1" name="CollectiveController" retryInterval="60">
+<Property name="uri" value="/ibm/api/dynamicRouting"/>
+<Connector host="server0.gym.lan" port="9491" protocol="https">
+<Property name="keyring" value="/opt/IBM/WebSphere/Plugins/config/webserver1/plugin-key-CollectiveController.kdb"/>
+</Connector>
+</ConnectorCluster>
+<Property name="RoutingRulesConnectorClusterName" value="CollectiveController"/>
+<ConnectorCluster enabled="true" maxRetries="-1" name="CollectiveController-c2" retryInterval="60">
+<Property name="uri" value="/ibm/api/dynamicRouting"/>
+<Connector host="server0.gym.lan" port="9492" protocol="https">
+<Property name="keyring" value="/opt/IBM/WebSphere/Plugins/config/webserver1/plugin-key-CollectiveController-c2.kdb"/>
+</Connector>
+</ConnectorCluster>
+</IntelligentManagement>
+</Config>

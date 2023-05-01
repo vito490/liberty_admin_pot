@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="new server">
+    <include location="${server.config.dir}/controller.xml" />
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>adminCenter-1.0</feature>
+    </featureManager>
+
+    <collectiveController 
+    replicaPort="10012"/>
+    
+    <wasJmsEndpoint id="InboundJmsEndpoint"
+      wasJmsPort="7278"
+      wasJmsSSLPort="7288">
+    </wasJmsEndpoint>
+    
+    <iiopEndpoint id="defaultIiopEndpoint" iiopPort="2810">
+      <iiopsOptions iiopsPort="9403" sslRef="defaultSSLConfig"/>
+   </iiopEndpoint>
+
+    <basicRegistry id="basic" realm="BasicRealm"> 
+        <user name="admin" password="admin" /> 
+    </basicRegistry>
+    
+    <administrator-role>
+    	<user>admin</user>
+    </administrator-role>
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+				  httpPort="9090"
+                  httpsPort="9493" />
+
+<!--KLP: Ensure http session data for the PBW, WhereAmI and the AdminCenter do not overwrite the JSESSIONID cookie to the same location -->                  
+   <httpSession useContextRootAsCookiePath="true" />                 
+                 
+</server>

@@ -64,7 +64,7 @@ BUILD THESE BEFORE DEMO
 
 -----------------------------------------------------------------------------
 
-Demo TA > see ./TA-demo-atifacts folder for artifacts and cheatsheet
+Demo TA > see ./TA-demo-artifacts folder for artifacts and cheatsheet
 
 
 
