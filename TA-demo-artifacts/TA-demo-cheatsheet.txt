@@ -24,7 +24,35 @@ https://github.com/IBMTechSales/klp-workshop-labs/tree/master/1153_B-Transformat
 
 ### TA Demo, which has "ModResorts" and "CustomerOrderService" apps (Can do zero to hero with Modresorts incuding migration bundle)
 
-### Use TA Archive "klp-AppSrv01-cos.zip" in the cloned repo. 
+### Use TA Archive "klp-AppSrv01-cos.zip" in the cloned repo.
+
+
+### -> Migration Bundle downloaded to "Downloads" and unzipped already... 
+    Note: I commented out the line for that loads from Liberty "apps" folder. I will use "dropins" 
+      <!--  <webApplication contextRoot="/resorts" location="modresorts-1.0.war"/> -->
+ 
+
+
+#### install Liberty from archive  (Use file explorer to unpack zip file)
+/home/techzone/liberty_admin_pot/TA-demo-artifacts/Liberty-Base.zip
+
+
+#### go to Liberty and create server and start it
+ 
+ cd /home/techzone/liberty_admin_pot/TA-demo-artifacts/Liberty-Base/wlp/bin
+ 
+ ./server create server1
+ ./server start server1
+ 
+ 
+ Copy /home/techzone/Student/LabFiles/modresorts-1.0.war to "Server1 "dropins" folder
+ 
+ --> See messages.log that app is started 
+ 
+
+### mod resorts app
+
+http://localhost:9080/resorts/
 
 
 
