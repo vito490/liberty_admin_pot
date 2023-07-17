@@ -76,7 +76,7 @@ if [[ "$HOSTNAME" = "$HOST0" ]]; then
 
   echo "Kill java process for CollectiveController process"
 
-  while [[ $(ps -ef | grep CollectiveController | head -n 1 | awk '{print $3}') -eq "1" ]] 
+  while [[ $(ps -ef | grep CollectiveController | wc -l ) -gt "1" ]] 
   do
     echo "in while loop"
 
