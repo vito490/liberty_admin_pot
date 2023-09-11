@@ -84,7 +84,7 @@
 # Hardware & Zone
 com.instana.plugin.generic.hardware:
   enabled: true # disabled by default
-  availability-zone: 'Liberty VMs'
+  availability-zone: 'springboot-apps'
 
 # AWS Services
 # Monitoring of all AWS Service are enabled by default except for AWS XRay.
@@ -288,20 +288,20 @@ com.instana.plugin.generic.hardware:
 #    interval: 10 # seconds
 
 # DB2
-com.instana.plugin.db2:
+# com.instana.plugin.db2:
 #  # Local monitoring configuration
-  local: # multiple local configurations supported
-    - instance: 'db2inst1'
-      port: '50000'
-      user: 'db2inst1'
-      password: 'db2inst1-pwd'
+#  local: # multiple local configurations supported
+#    - instance: 'db2inst1'
+#      port: '50000'
+#      user: 'db2inst1'
+#      password: 'db2inst1-pwd'
 #      accessTokenType: 'JWT' #If enabled, password field takes token value as password instead of plain text. So, please enable this only for token authentication.
 #      poll_rate: 5 # seconds
 #      # TLS configuration
 #      sslTrustStorePassword: 'password'
 #      sslTrustStoreLocation: '/path/to/clientTrustStore.jks'
-      databases:
-        - 'pbw'
+#      databases:
+#        - 'pbw'
 #        - 'database2'
 #        - 'database3'
 #        - 'database4'
@@ -444,16 +444,16 @@ com.instana.plugin.db2:
 #  exclude_tags: ''
 
 # Apache Httpd
-com.instana.plugin.httpd:
+# com.instana.plugin.httpd:
 #  user: ''
 #  password: ''
-  tracing:
+#  tracing:
 #    # Enabling tracing will automatically download the HTTPd Tracing module and
 #    # load it in your Apache configuration file. You will need to manually restart
 #    # Apache HTTP Server unless you specify a restart script in notificationScript
 #    # or enable autoRestart. Disabling tracing will not remove the HTTPd Tracing module.
 #    # It will only remove the tracing module config from the Apache configuration file.
-    enabled: true
+#    enabled: true
 #    # Pins the HTTPd Tracing module to download and install to a specific version.
 #    # This can be used to rollback to previous versions of the module or to test
 #    # beta versions (when asked to do so). Expects the version to be given as
@@ -467,7 +467,7 @@ com.instana.plugin.httpd:
 #    # Apache HTTP Server to load the updated HTTPd Tracing module into memory.
 #    # If you specify a notificationScript, then the sensor will ignore autoRestart setting
 #    # unless the execution of.notificationScript failed.
-    autoRestart: true
+#    autoRestart: true
 
 # IBM ACE
 #com.instana.plugin.ace:
@@ -1002,9 +1002,9 @@ com.instana.plugin.httpd:
 #      password: ''
 
 # SpringBoot
-#com.instana.plugin.springboot:
-#  metrics-interval: 1
-#  health-interval: 30
+com.instana.plugin.springboot:
+  metrics-interval: 1
+  health-interval: 30
 
 # StatsD
 #com.instana.plugin.statsd:
